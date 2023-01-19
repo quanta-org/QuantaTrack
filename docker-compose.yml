@@ -1,0 +1,32 @@
+version: "3.9"
+
+volumes:
+  oracle_volume:
+
+services:
+  sao_svelte:
+    build: .
+    container_name: sao_svelte
+    network_mode: host
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/svelte
+      - /svelte/node_modules
+    environment:
+      DB: ${DB}
+      DBUSER: ${DBUSER}
+      DBUSERPASS: ${DBUSERPASS}
+      JWTSECRETKEY: ${JWTSECRETKEY}
+  sao_oracle:
+    container_name: sao_oracle
+    network_mode: host
+    ports:
+      - '1521:1521'
+    environment:
+      ORACLE_PASSWORD: ${DBPASS}
+      APP_USER: ${DBUSER}
+      APP_USER_PASSWORD: ${DBUSERPASS}
+    volumes:
+      - oracle_volume:/opt/oracle/oradata
+    image: gvenzl/oracle-xe
