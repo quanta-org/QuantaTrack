@@ -1,7 +1,6 @@
 import { redirect, type Handle } from "@sveltejs/kit";
 import { env } from '$env/dynamic/private';
-import jsonwebtoken, { TokenExpiredError } from "jsonwebtoken";
-import { events } from "oracledb";
+import jsonwebtoken from "jsonwebtoken";
 
 interface User {
     username: string,
@@ -23,7 +22,7 @@ export const handle = (async ({ event, resolve }) => {
             event.locals.user = decoded;
         }
         catch(e){
-            if(e instanceof TokenExpiredError){
+            if(e instanceof jsonwebtoken.TokenExpiredError){
                 throw redirect(302, "/login?err=tokenexpired");
             } else {
                 console.log(e);
