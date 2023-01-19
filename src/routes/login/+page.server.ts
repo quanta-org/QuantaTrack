@@ -10,7 +10,6 @@ export const load = (async ({ locals }) => {
 	};
 }) satisfies PageServerLoad;
 
-
 export const actions: Actions = {
 	login: async (event: RequestEvent) => {
 		const data = await event.request.formData();
@@ -38,11 +37,14 @@ export const actions: Actions = {
 		event.cookies.set('jwt', token);
 		console.log('User ' + username + ' logged in.');
 
-		if(event.url.searchParams.get("redirect") && event.url.searchParams.get("redirect") !== "null"){
-			throw redirect(302, event.url.searchParams.get("redirect") as string);
+		if (
+			event.url.searchParams.get('redirect') &&
+			event.url.searchParams.get('redirect') !== 'null'
+		) {
+			throw redirect(302, event.url.searchParams.get('redirect') as string);
 		}
-		
-		throw redirect(307, "/");
+
+		throw redirect(307, '/');
 	},
 
 	stationlogin: async (event: RequestEvent) => {
@@ -58,12 +60,14 @@ export const actions: Actions = {
 		event.cookies.set('jwt', token);
 		console.log('Station ' + stationid + ' logged in.');
 
-		if(event.url.searchParams.get("redirect") && event.url.searchParams.get("redirect") !== "null"){
-			console.log("WHAR");
-			throw redirect(302, event.url.searchParams.get("redirect") as string);
+		if (
+			event.url.searchParams.get('redirect') &&
+			event.url.searchParams.get('redirect') !== 'null'
+		) {
+			throw redirect(302, event.url.searchParams.get('redirect') as string);
 		}
 
-		throw redirect(302, "/");
+		throw redirect(302, '/');
 	},
 
 	logout: async (event: RequestEvent) => {

@@ -15,7 +15,7 @@
 		Button,
 		Toast
 	} from 'flowbite-svelte';
-	import { user, toast } from '$lib/store';
+	import { toast } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
@@ -69,13 +69,34 @@
 		</span>
 	</NavBrand>
 	<NavHamburger on:click={toggle} />
-	<NavUl {hidden} class="rounded-lg md:dark:bg-gray-900 dark:border-gray-700">
-		<NavLi href="/" active={$page.url.pathname === '/'}>Home</NavLi>
-		<NavLi id="nav-menu1" class="cursor-pointer" active={$page.url.pathname.includes('/parcels')}
+	<NavUl {hidden} class="rounded-lg md:bg-gray-900 border-gray-700">
+		<NavLi
+			href="/"
+			active={$page.url.pathname === '/'}
+			activeClass="text-white bg-blue-600 md:bg-transparent"
+			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
+			>Home</NavLi
+		>
+		<NavLi
+			id="nav-menu1"
+			class="cursor-pointer"
+			active={$page.url.pathname.includes('/parcels')}
+			activeClass="text-white bg-blue-600 md:bg-transparent"
+			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			><Chevron aligned>Parcels</Chevron></NavLi
 		>
-		<NavLi href="#">Blocks & Slides</NavLi>
-		<NavLi href="#">Kits</NavLi>
+		<NavLi
+			href="#"
+			activeClass="text-white bg-blue-600 md:bg-transparent"
+			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
+			>Blocks & Slides</NavLi
+		>
+		<NavLi
+			href="#"
+			activeClass="text-white bg-blue-600 md:bg-transparent"
+			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
+			>Kits</NavLi
+		>
 		<Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
 			<DropdownItem href="/parcels/receipt">Receipt</DropdownItem>
 			<DropdownItem href="/parcels/opening">Opening</DropdownItem>
@@ -86,7 +107,11 @@
 
 	<NavUl {hidden}>
 		{#if data.user}
-			<NavLi id="nav-menu2" class="cursor-pointer"
+			<NavLi
+				id="nav-menu2"
+				class="cursor-pointer"
+				activeClass="text-white bg-blue-600 md:bg-transparent"
+				nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 				><Chevron aligned><b>{data.user.username}</b></Chevron></NavLi
 			>
 			<Dropdown triggeredBy="#nav-menu2" class="w-44 z-20">

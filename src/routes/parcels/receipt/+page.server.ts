@@ -7,18 +7,18 @@ import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken';
 export const prerender = false;
 
 export const load = (async ({ locals }) => {
-	if(!locals.user){
-		throw redirect(302, '/login?redirect=parcels%2Freceipt')
+	if (!locals.user) {
+		throw redirect(302, '/login?redirect=parcels%2Freceipt');
 	}
 
 	return {
 		user: locals.user
-	}
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	addParcelReceipt: async (event: RequestEvent) => {
-		if(!event.locals.user){
+		if (!event.locals.user) {
 			return fail(401, { message: 'Access expired, please log back in.' });
 		}
 

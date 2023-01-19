@@ -6,7 +6,7 @@ import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken';
 import { page } from '$app/stores';
 export const prerender = false;
 
-async function getParcels(pageNumber: number){
+async function getParcels(pageNumber: number) {
 	// Get data from db
 	let connection;
 	let parcels: any[] = [];
@@ -18,11 +18,11 @@ async function getParcels(pageNumber: number){
 	});
 
 	let result;
-	if(pageNumber != 0){
+	if (pageNumber != 0) {
 		let end = pageNumber * 50;
 		let start = end - 50;
 		const sql = `select * from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND OFFSET :1 ROWS FETCH NEXT :2 ROWS ONLY`;
-		result = await connection.execute(sql, [start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT })
+		result = await connection.execute(sql, [start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 	} else {
 		const sql = `select * from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND`;
 		result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
@@ -35,7 +35,7 @@ async function getParcels(pageNumber: number){
 	return JSON.stringify(parcels);
 }
 
-async function getParcelCount(){
+async function getParcelCount() {
 	// Get data from db
 	let connection;
 	let parcels: any[] = [];
@@ -47,42 +47,42 @@ async function getParcelCount(){
 	});
 
 	let result;
-	const sql = `select COUNT(*) from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND`
+	const sql = `select COUNT(*) from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND`;
 	result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 	await connection.close();
 
 	let count = result.rows?.at(0) as any;
-	return count["COUNT(*)"];
+	return count['COUNT(*)'];
 }
 
 export const load = (async ({ locals, url }) => {
-	if(!locals.user){
+	if (!locals.user) {
 		throw redirect(302, '/login?redirect=parcels%2Flookup');
 	}
 
-	if(!locals.user.auth){
+	if (!locals.user.auth) {
 		throw redirect(302, '/login?err=unauthorized');
 	}
 
 	// Get request url
 	let pageNumber = 1;
-	if(url.searchParams.get("page")){
-		pageNumber = parseInt(url.searchParams.get("page") as string);
+	if (url.searchParams.get('page')) {
+		pageNumber = parseInt(url.searchParams.get('page') as string);
 	}
 
 	// Get data from db
 	let parcelData: string;
 	let parcelCount: number;
-	try{
+	try {
 		parcelData = await getParcels(pageNumber);
 		parcelCount = await getParcelCount();
-	} catch(err) {
+	} catch (err) {
 		console.log(err);
 		return {
-			parcels: "[]",
+			parcels: '[]',
 			parcelCount: 0,
-			error: "Could not connect to db!"
-		}
+			error: 'Could not connect to db!'
+		};
 	}
 
 	return {

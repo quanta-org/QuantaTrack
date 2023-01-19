@@ -4,9 +4,9 @@ Asset tracking application
 
 ## Prerequisites
 
- - [Docker](https://docs.docker.com/get-docker/)
- or
- - [Node.js](https://nodejs.org/en/download/)
+- [Docker](https://docs.docker.com/get-docker/)
+  or
+- [Node.js](https://nodejs.org/en/download/)
 
 ## Docker Setup
 

@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 volumes:
   oracle_volume:
@@ -9,7 +9,7 @@ services:
     container_name: sao_svelte
     network_mode: host
     ports:
-      - "5173:5173"
+      - '5173:5173'
     volumes:
       - .:/svelte
       - /svelte/node_modules

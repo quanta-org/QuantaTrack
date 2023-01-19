@@ -103,9 +103,7 @@
 				};
 			}}
 		>
-			{#if $page.url.searchParams.get('err') == 'tokenexpired'}
-				<h2 class="text-white text-xl self-center">Access expired. Please log out.</h2>
-			{:else if $page.url.searchParams.get('err') == 'unauthorized'}
+			{#if $page.url.searchParams.get('err') == 'unauthorized'}
 				<h2 class="text-white text-xl self-center">
 					Logged in as station: <b>{data.user.username}</b>
 				</h2>
