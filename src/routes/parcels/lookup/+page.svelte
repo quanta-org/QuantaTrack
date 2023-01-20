@@ -1,7 +1,19 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
-	import { Card, Input, Pagination, Search, Button } from 'flowbite-svelte';
+	import {
+		Card,
+		Input,
+		Pagination,
+		Search,
+		Button,
+		Table,
+		TableBody,
+		TableBodyCell,
+		TableBodyRow,
+		TableHead,
+		TableHeadCell
+	} from 'flowbite-svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
@@ -80,51 +92,60 @@
 </div>
 
 <div class="flex gap-2 flex-wrap justify-center p-10">
-	{#each JSON.parse(data.parcels) as parcel}
-		<Card class="w-96">
-			<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-all">
-				{parcel.TRACKING_INBOUND}
-			</h5>
-			<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-				Receiver: <b>{parcel.ACTION_TECH_EMAIL}</b>
-			</p>
-			<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-				Workstation: <b>{parcel.WORKSTATION_CODE}</b>
-			</p>
-			<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-				Carrier: <b>{parcel.CARRIER}</b>
-			</p>
-			<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-				Routing Code: <b>{parcel.PARCEL_ROUTING_CODE}</b>
-			</p>
-			<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-				Date: <b>{parcel.ACTION_DATE}</b>
-			</p>
-			{#if parcel.TCDI}
-				<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-					TCDI: <b>{parcel.TCDI}</b>
-				</p>
-				<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-					Kit #: <b>{parcel.KIT_ID_NUMBER}</b>
-				</p>
-				{#if parcel.ACTION_OWNER_BARCODE}
-					<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-						Owner #: <b>{parcel.ACTION_OWNER_BARCODE}</b>
-					</p>
-				{/if}
-				{#if parcel.ORDER_NUMBER}
-					<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-						Order #: <b>{parcel.ORDER_NUMBER}</b>
-					</p>
-				{/if}
-				{#if parcel.CLINIC_CODE}
-					<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-						Clinic #: <b>{parcel.CLINIC_CODE}</b>
-					</p>
-				{/if}
-			{/if}
-		</Card>
-	{/each}
+	<Table>
+		<TableHead>
+			<TableHeadCell>Tracking Number</TableHeadCell>
+			<TableHeadCell>Receiver</TableHeadCell>
+			<TableHeadCell>Workstation</TableHeadCell>
+			<TableHeadCell>Carrier</TableHeadCell>
+			<TableHeadCell>Routing Code</TableHeadCell>
+			<TableHeadCell>Date</TableHeadCell>
+			<TableHeadCell>TCDI</TableHeadCell>
+			<TableHeadCell>Kit #</TableHeadCell>
+			<TableHeadCell>Owner #</TableHeadCell>
+			<TableHeadCell>Order #</TableHeadCell>
+			<TableHeadCell>Clinic #</TableHeadCell>
+		</TableHead>
+		<TableBody tableBodyClass="divide-y">
+			{#each JSON.parse(data.parcels) as parcel}
+				<TableBodyRow>
+					<TableBodyCell>
+						{parcel.TRACKING_INBOUND}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.ACTION_TECH_EMAIL}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.WORKSTATION_CODE}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.CARRIER}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.PARCEL_ROUTING_CODE}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.ACTION_DATE}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.TCDI}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.KIT_ID_NUMBER}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.ACTION_OWNER_BARCODE}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.ORDER_NUMBER}
+					</TableBodyCell>
+					<TableBodyCell>
+						{parcel.CLINIC_CODE}
+					</TableBodyCell>
+				</TableBodyRow>
+			{/each}
+		</TableBody>
+	</Table>
 </div>
 
 <div class="flex justify-center p-5 pb-10">
