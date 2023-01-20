@@ -129,7 +129,11 @@
 		}}
 	>
 		<div class="mb-6">
-			<Label for="receiver" class="mb-2">Receiver</Label>
+			<Label for="receiver" class="mb-2">
+				<div class="text-white">
+					Receiver
+				</div>
+			</Label>
 			<Input
 				type="text"
 				id="receiver"
@@ -142,7 +146,11 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="workstation" class="mb-2">Workstation</Label>
+			<Label for="workstation" class="mb-2">
+				<div class="text-white">
+					Workstation
+				</div>
+			</Label>
 			{#if isWorkstation}
 				<Input
 					id="workstation"
@@ -166,7 +174,11 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="carrier" class="mb-2">Carrier</Label>
+			<Label for="carrier" class="mb-2">
+				<div class="text-white">
+					Carrier
+				</div>
+			</Label>
 			<Select
 				id="carrier"
 				name="carrier"
@@ -179,7 +191,11 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="routeLocation" class="mb-2">Routing Location</Label>
+			<Label for="routeLocation" class="mb-2">
+				<div class="text-white">
+					Routing Location
+				</div>
+			</Label>
 			<Select
 				id="routeLocation"
 				name="routeLocation"
@@ -192,7 +208,11 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="tracknum" class="mb-2">Tracking Number</Label>
+			<Label for="tracknum" class="mb-2">
+				<div class="text-white">
+					Tracking Number
+				</div>
+			</Label>
 			<Input
 				type="text"
 				id="tracknum"

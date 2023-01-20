@@ -1,85 +1,67 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
-	import { Card, Input, Pagination } from 'flowbite-svelte';
+	import { Card, Input, Pagination, Search, Button } from 'flowbite-svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { toast } from '$lib/store';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
-	let filter: string = '';
-	$: activeUrl = $page.url.searchParams.get('page') ?? '1';
-	$: filteredList = filterList(JSON.parse(data.parcels), filter);
-	let pages = [{ name: 1, href: '/parcels/lookup?page=1', active: true }];
+	let filter: string = data.filter ?? "";
+	$: activePageNumber = $page.url.searchParams.get('page') ?? '1';
+	let pages: { name: number, href:string, active: boolean; }[] = [];
 
 	$: {
-		pages.forEach((page) => {
-			let splitUrl = page.href.split('?');
-			let queryString = splitUrl.slice(1).join('?');
-			const hrefParams = new URLSearchParams(queryString);
-			let hrefValue = hrefParams.get('page');
-			if (hrefValue === activeUrl) {
-				page.active = true;
-			} else {
-				page.active = false;
+		// Set pages to the correct # of pages
+		if (browser && data.pageCount) {
+			pages = [];
+			let url = new URL($page.url);
+			for (let i = 1; i < data.pageCount + 1; i++) {
+				url.searchParams.set("page", i.toString());
+
+				// Determines which page is active
+				if(i.toString() === activePageNumber){
+					pages.push({ name: i, href: url.href, active: true });
+				} else {
+					pages.push({ name: i, href: url.href, active: false });
+				}
 			}
-		});
-
-		if (!activeUrl) {
-			pages[0].active = true;
+			pages = pages;
 		}
-
-		pages = pages;
 	}
 
 	const previous = async () => {
-		let pageNumber = parseInt(activeUrl as string);
+		let url = new URL($page.url)
+		let pageNumber = parseInt(activePageNumber);
 		if (pageNumber > 1) {
 			pageNumber -= 1;
-			goto('/parcels/lookup?page=' + pageNumber);
+			url.searchParams.set("page", pageNumber.toString())
+			goto(url);
 		}
 	};
 
 	const next = () => {
-		let pageNumber = parseInt(activeUrl as string);
+		let url = new URL($page.url)
+		let pageNumber = parseInt(activePageNumber);
 		if (data.pageCount && pageNumber < data.pageCount) {
 			pageNumber += 1;
-			goto('/parcels/lookup?page=' + pageNumber);
+			url.searchParams.set("page", pageNumber.toString())
+			goto(url);
 		}
 	};
-
-	function filterList(list: any[], filter: string) {
-		let out: any[] = [];
-		filter = filter.toLowerCase();
-
-		list.forEach((item) => {
-			if (item.TRACKING_INBOUND.toLowerCase().indexOf(filter) !== -1) {
-				out.push(item);
-			} else if (item.ACTION_TECH_EMAIL.toLowerCase().indexOf(filter) !== -1) {
-				out.push(item);
-			} else if (item.KIT_ID_NUMBER && item.KIT_ID_NUMBER.indexOf(filter) !== -1) {
-				console.log(item.KIT_ID_NUMBER);
-				out.push(item);
-			} else if (item.TCDI && item.TCDI.indexOf(filter) !== -1) {
-				console.log(item.TCDI);
-				out.push(item);
-			}
-		});
-
-		return out;
-	}
 
 	onMount(() => {
 		if (data.error) {
 			toast.set(JSON.stringify({ message: data.error, success: 'false', show: 'true' }));
 		}
-
+		
 		if (data.pageCount && data.pageCount > 1) {
-			console.log(data.pageCount);
-			for (var i = 2; i < data.pageCount + 1; i++) {
-				pages.push({ name: i, href: '/parcels/lookup?page=' + i, active: false });
-				console.log(pages);
+			let url = new URL($page.url);
+			for (var i = 1; i < data.pageCount + 1; i++) {
+				url.searchParams.set("page", i.toString());
+				pages.push({ name: i, href: url.href, active: false });
 			}
 			pages = pages;
 		}
@@ -89,16 +71,16 @@
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Lookup</h1>
 
 <div class="flex justify-center">
-	<Input
-		type="text"
-		class="w-96 mx-2"
-		bind:value={filter}
-		placeholder="Search by tracking number, kit, tcdi, receiver..."
-	/>
+	<form class="flex gap-2 w-96" action="?/" method="get">
+		<input type="hidden" name="page" value={activePageNumber} />
+		<Search name="q" bind:value={filter} >
+			<Button type="submit">Search</Button>
+		</Search>
+	</form>
 </div>
 
 <div class="flex gap-2 flex-wrap justify-center p-10">
-	{#each filteredList as parcel}
+	{#each JSON.parse(data.parcels) as parcel}
 		<Card class="w-96">
 			<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-all">
 				{parcel.TRACKING_INBOUND}
@@ -146,5 +128,7 @@
 </div>
 
 <div class="flex justify-center p-5 pb-10">
-	<Pagination {pages} on:previous={previous} on:next={next} />
+	{#if pages}
+		<Pagination {pages} on:previous={previous} on:next={next} />
+	{/if}
 </div>
