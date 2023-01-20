@@ -56,12 +56,6 @@
 	});
 </script>
 
-<Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
-	<DropdownItem href="/parcels/receipt">Receipt</DropdownItem>
-	<DropdownItem href="/parcels/opening">Opening</DropdownItem>
-	<DropdownDivider />
-	<DropdownItem href="/parcels/lookup">Lookup</DropdownItem>
-</Dropdown>
 
 <Navbar
 	let:hidden
@@ -104,6 +98,13 @@
 			nonActiveClass="pl-0 md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Kits</NavLi
 		>
+
+		<Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
+			<DropdownItem href="/parcels/receipt">Receipt</DropdownItem>
+			<DropdownItem href="/parcels/opening">Opening</DropdownItem>
+			<DropdownDivider />
+			<DropdownItem href="/parcels/lookup">Lookup</DropdownItem>
+		</Dropdown>
 	</NavUl>
 
 	<NavUl {hidden}>
