@@ -5,9 +5,13 @@ import oracledb from 'oracledb';
 
 export const prerender = false;
 
-export const load = (async ({ locals }) => {
+export const load = (async ({ locals, url }) => {
+	// Redirect to login if user doesn't exist
 	if (!locals.user) {
-		throw redirect(302, '/login?redirect=parcels%2Freceipt');
+		let redirectUrl = new URL(url.origin);
+		redirectUrl.pathname = "/login";
+		redirectUrl.searchParams.append("redirect", url.pathname);
+		throw redirect(302, redirectUrl.href);
 	}
 
 	return {

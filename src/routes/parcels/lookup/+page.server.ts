@@ -62,12 +62,18 @@ async function getParcelCount(filter: string | null = null) {
 }
 
 export const load = (async ({ locals, url }) => {
+	// Redirect to login if user doesn't exist
+	let redirectUrl = new URL(url.origin);
+	redirectUrl.pathname = "/login";
 	if (!locals.user) {
-		throw redirect(302, '/login?redirect=parcels%2Flookup');
+		redirectUrl.searchParams.append("redirect", url.pathname);
+		throw redirect(302, redirectUrl.href);
 	}
 
+	// Redirect to login if unauthorized
 	if (!locals.user.auth) {
-		throw redirect(302, '/login?err=unauthorized');
+		redirectUrl.searchParams.append("err", "unauthorized");
+		throw redirect(302, redirectUrl.href);
 	}
 
 	// Get request url
