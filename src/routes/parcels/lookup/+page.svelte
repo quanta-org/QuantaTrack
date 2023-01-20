@@ -9,9 +9,9 @@
 	import { enhance } from '$app/forms';
 
 	export let data: PageData;
-	let filter: string = data.filter ?? "";
+	let filter: string = data.filter ?? '';
 	$: activePageNumber = $page.url.searchParams.get('page') ?? '1';
-	let pages: { name: number, href:string, active: boolean; }[] = [];
+	let pages: { name: number; href: string; active: boolean }[] = [];
 
 	$: {
 		// Set pages to the correct # of pages
@@ -19,10 +19,10 @@
 			pages = [];
 			let url = new URL($page.url);
 			for (let i = 1; i < data.pageCount + 1; i++) {
-				url.searchParams.set("page", i.toString());
+				url.searchParams.set('page', i.toString());
 
 				// Determines which page is active
-				if(i.toString() === activePageNumber){
+				if (i.toString() === activePageNumber) {
 					pages.push({ name: i, href: url.href, active: true });
 				} else {
 					pages.push({ name: i, href: url.href, active: false });
@@ -33,21 +33,21 @@
 	}
 
 	const previous = async () => {
-		let url = new URL($page.url)
+		let url = new URL($page.url);
 		let pageNumber = parseInt(activePageNumber);
 		if (pageNumber > 1) {
 			pageNumber -= 1;
-			url.searchParams.set("page", pageNumber.toString())
+			url.searchParams.set('page', pageNumber.toString());
 			goto(url);
 		}
 	};
 
 	const next = () => {
-		let url = new URL($page.url)
+		let url = new URL($page.url);
 		let pageNumber = parseInt(activePageNumber);
 		if (data.pageCount && pageNumber < data.pageCount) {
 			pageNumber += 1;
-			url.searchParams.set("page", pageNumber.toString())
+			url.searchParams.set('page', pageNumber.toString());
 			goto(url);
 		}
 	};
@@ -56,11 +56,11 @@
 		if (data.error) {
 			toast.set(JSON.stringify({ message: data.error, success: 'false', show: 'true' }));
 		}
-		
+
 		if (data.pageCount && data.pageCount > 1) {
 			let url = new URL($page.url);
 			for (var i = 1; i < data.pageCount + 1; i++) {
-				url.searchParams.set("page", i.toString());
+				url.searchParams.set('page', i.toString());
 				pages.push({ name: i, href: url.href, active: false });
 			}
 			pages = pages;
@@ -73,7 +73,7 @@
 <div class="flex justify-center">
 	<form class="flex gap-2 w-96" action="?/" method="get">
 		<input type="hidden" name="page" value={activePageNumber} />
-		<Search name="q" bind:value={filter} >
+		<Search name="q" bind:value={filter}>
 			<Button type="submit">Search</Button>
 		</Search>
 	</form>

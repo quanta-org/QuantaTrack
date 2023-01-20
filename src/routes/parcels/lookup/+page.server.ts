@@ -1,13 +1,11 @@
-import { fail, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions, RequestEvent } from './$types';
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import oracledb from 'oracledb';
-import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken';
-import { page } from '$app/stores';
 
 export const prerender = false;
 
-async function getParcels(pageNumber: number, filter: string = "") {
+async function getParcels(pageNumber: number, filter: string = '') {
 	// Get data from db
 	let connection;
 	let parcels: any[] = [];
@@ -21,9 +19,11 @@ async function getParcels(pageNumber: number, filter: string = "") {
 	let result;
 	let end = pageNumber * 50;
 	let start = end - 50;
-	if(filter != "") {
+	if (filter != '') {
 		const sql = `select * from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND WHERE PARCELRECEIPT.TRACKING_INBOUND LIKE '%' || :1 || '%' OFFSET :2 ROWS FETCH NEXT :3 ROWS ONLY`;
-		result = await connection.execute(sql, [filter, start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+		result = await connection.execute(sql, [filter, start, end], {
+			outFormat: oracledb.OUT_FORMAT_OBJECT
+		});
 	} else {
 		const sql = `select * from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND OFFSET :1 ROWS FETCH NEXT :2 ROWS ONLY`;
 		result = await connection.execute(sql, [start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT });
@@ -36,7 +36,7 @@ async function getParcels(pageNumber: number, filter: string = "") {
 	return JSON.stringify(parcels);
 }
 
-async function getParcelCount(filter: string|null = null) {
+async function getParcelCount(filter: string | null = null) {
 	// Get data from db
 	let connection;
 	let parcels: any[] = [];
@@ -48,7 +48,7 @@ async function getParcelCount(filter: string|null = null) {
 	});
 
 	let result;
-	if(filter && filter != ""){
+	if (filter && filter != '') {
 		let sql = `select COUNT(*) from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND WHERE PARCELRECEIPT.TRACKING_INBOUND LIKE '%' || :1 || '%'`;
 		result = await connection.execute(sql, [filter], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 	} else {
@@ -77,7 +77,7 @@ export const load = (async ({ locals, url }) => {
 	}
 
 	// Get filter
-	let filter = url.searchParams.get('q') ?? "";
+	let filter = url.searchParams.get('q') ?? '';
 
 	// Get data from db
 	let parcelData: string;

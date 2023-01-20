@@ -29,8 +29,6 @@ export const handle = (async ({ event, resolve }) => {
 				console.log(e);
 			}
 		}
-	} else {
-		event.locals.user = null;
 	}
 
 	return resolve(event);

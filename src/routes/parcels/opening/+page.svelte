@@ -86,9 +86,7 @@
 	>
 		<div class="mb-6">
 			<Label for="user" class="mb-2">
-				<div class="text-white">
-					User
-				</div>
+				<div class="text-white">User</div>
 			</Label>
 			<Input
 				type="text"
@@ -103,9 +101,7 @@
 
 		<div class="mb-6">
 			<Label for="workstation" class="mb-2">
-				<div class="text-white">
-					Workstation
-				</div>
+				<div class="text-white">Workstation</div>
 			</Label>
 			{#if isWorkstation}
 				<Input
@@ -131,9 +127,7 @@
 
 		<div class="mb-6">
 			<Label for="tracknum" class="mb-2">
-				<div class="text-white">
-					Tracking Number
-				</div>
+				<div class="text-white">Tracking Number</div>
 			</Label>
 			<Input
 				type="text"
@@ -148,9 +142,7 @@
 
 		<div class="mb-6">
 			<Label for="tcdi" class="mb-2">
-				<div class="text-white">
-					TCDI
-				</div>
+				<div class="text-white">TCDI</div>
 			</Label>
 			<Input
 				type="text"
@@ -165,9 +157,7 @@
 
 		<div class="mb-6">
 			<Label for="kitID" class="mb-2">
-				<div class="text-white">
-					Kit ID
-				</div>
+				<div class="text-white">Kit ID</div>
 			</Label>
 			<Input
 				type="text"

@@ -74,15 +74,11 @@
 			<h2 class="text-white text-xl text-center">or</h2>
 
 			<Label class="mb-2">
-				<div class="text-white">
-					User Name:
-				</div>
-				<Input name="username" type="text"  bind:value={username} required color={undefined} />
+				<div class="text-white">User Name:</div>
+				<Input name="username" type="text" bind:value={username} required color={undefined} />
 			</Label>
 			<Label class="mb-2">
-				<div class="text-white">
-					Password:
-				</div>
+				<div class="text-white">Password:</div>
 				<Input name="password" type="password" required />
 			</Label>
 			<div class="flex justify-center gap-2 mt-5">

@@ -2,7 +2,6 @@ import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { env } from '$env/dynamic/private';
 import oracledb from 'oracledb';
 import { fail, redirect } from '@sveltejs/kit';
-import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken';
 
 export const prerender = false;
 
