@@ -7,10 +7,10 @@ services:
   sao_svelte:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     container_name: sao_svelte
     ports:
-      - '5173:5173'
+      - '5173:3000'
     volumes:
       - .:/svelte
       - /svelte/node_modules
