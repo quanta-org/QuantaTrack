@@ -2,13 +2,6 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import jsonwebtoken from 'jsonwebtoken';
 
-interface User {
-	username: string;
-	auth: boolean;
-	iat: number;
-	exp: number;
-}
-
 export const handle = (async ({ event, resolve }) => {
 	const jwt = event.cookies.get('jwt');
 
@@ -17,7 +10,7 @@ export const handle = (async ({ event, resolve }) => {
 			let decoded = jsonwebtoken.verify(
 				event.cookies.get('jwt') ?? '',
 				env.JWTSECRETKEY ?? 'shhsecret'
-			) as User;
+			) as App.User;
 
 			event.locals.user = decoded;
 		} catch (e) {

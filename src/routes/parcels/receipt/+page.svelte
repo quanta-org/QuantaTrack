@@ -8,13 +8,10 @@
 	export let data: PageData;
 	export let form: HTMLFormElement;
 	var charArray: string[] = [];
-	let ParcelReceipt = {
-		ReceiverID: 'John',
-		workstationCode: '',
-		Carrier: '',
-		TrackingNumber: '',
-		RoutingLocation: ''
-	};
+	let uniqname: string;
+	let workstation: string;
+	let carrier: string;
+	let trackingNumber: string;
 	let isWorkstation: boolean;
 	let routingLocations = [
 		{ value: 'NCRC-CONSULT', name: 'NCRC-CONSULT' },
@@ -38,7 +35,7 @@
 			let tracknum = charArray.join('');
 			charArray = [];
 
-			if (ParcelReceipt.TrackingNumber === tracknum) {
+			if (trackingNumber === tracknum) {
 				form.requestSubmit();
 				return;
 			}
@@ -56,25 +53,25 @@
 			//Detect UPS
 			ups_regex.forEach((value) => {
 				if (tracknum.match(value)) {
-					ParcelReceipt.Carrier = 'UPS';
+					carrier = 'UPS';
 				}
 			});
 
 			//Detect FedEx
 			fedex_regex.forEach((value) => {
 				if (tracknum.match(value)) {
-					ParcelReceipt.Carrier = 'FedEx';
+					carrier = 'FedEx';
 				}
 			});
 
 			//Detect USPS
 			usps_regex.forEach((value) => {
 				if (tracknum.match(value)) {
-					ParcelReceipt.Carrier = 'USPS';
+					carrier = 'USPS';
 				}
 			});
 
-			ParcelReceipt.TrackingNumber = tracknum;
+			trackingNumber = tracknum;
 		}
 	}
 
@@ -85,10 +82,10 @@
 	onMount(() => {
 		if (data.user) {
 			if (data.user.auth === false) {
-				ParcelReceipt.workstationCode = data.user.username;
+				workstation = data.user.username;
 				isWorkstation = true;
 			} else {
-				ParcelReceipt.ReceiverID = data.user.username;
+				uniqname = data.user.username;
 				isWorkstation = false;
 			}
 		}
@@ -98,7 +95,7 @@
 <svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Receipt</h1>
-{#if ParcelReceipt.TrackingNumber}
+{#if trackingNumber}
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan again to add</h2>
 {:else}
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan parcel or add tracking number</h2>
@@ -117,7 +114,7 @@
 					toast.set(
 						JSON.stringify({ message: 'Sucessfully added parcel!', success: 'true', show: 'true' })
 					);
-					ParcelReceipt.TrackingNumber = '';
+					trackingNumber = '';
 				} else if (result.type == 'failure') {
 					toast.set(
 						JSON.stringify({ message: result.data?.message, success: 'false', show: 'true' })
@@ -129,15 +126,15 @@
 		}}
 	>
 		<div class="mb-6">
-			<Label for="receiver" class="mb-2">
-				<div class="text-white">Receiver</div>
+			<Label for="uniqname" class="mb-2">
+				<div class="text-white">Uniqname</div>
 			</Label>
 			<Input
 				type="text"
-				id="receiver"
-				name="receiver"
+				id="uniqname"
+				name="uniqname"
 				tabindex="-1"
-				bind:value={ParcelReceipt.ReceiverID}
+				bind:value={uniqname}
 				on:change={clearArray}
 				required
 			/>
@@ -150,9 +147,9 @@
 			{#if isWorkstation}
 				<Input
 					id="workstation"
-					name="workstationCode"
+					name="workstation"
 					tabindex="-1"
-					bind:value={ParcelReceipt.workstationCode}
+					bind:value={workstation}
 					class="mt-2"
 					readonly
 					required
@@ -160,9 +157,9 @@
 			{:else}
 				<Input
 					id="workstation"
-					name="workstationCode"
+					name="workstation"
 					tabindex="-1"
-					bind:value={ParcelReceipt.workstationCode}
+					bind:value={workstation}
 					class="mt-2"
 					required
 				/>
@@ -178,7 +175,7 @@
 				name="carrier"
 				tabindex="-1"
 				items={couriers}
-				bind:value={ParcelReceipt.Carrier}
+				bind:value={carrier}
 				class="mb-2"
 				required
 			/>
@@ -193,22 +190,22 @@
 				name="routeLocation"
 				tabindex="-1"
 				items={routingLocations}
-				bind:value={ParcelReceipt.RoutingLocation}
+				value=""
 				class="mb-2"
 				required
 			/>
 		</div>
 
 		<div class="mb-6">
-			<Label for="tracknum" class="mb-2">
+			<Label for="trackingNumber" class="mb-2">
 				<div class="text-white">Tracking Number</div>
 			</Label>
 			<Input
 				type="text"
-				id="tracknum"
-				name="trackNumber"
+				id="trackingNumber"
+				name="trackingNumber"
 				tabindex="-1"
-				bind:value={ParcelReceipt.TrackingNumber}
+				bind:value={trackingNumber}
 				placeholder="1Z 6F8..."
 				required
 			/>

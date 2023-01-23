@@ -13,8 +13,7 @@
 		Chevron,
 		DropdownDivider,
 		Button,
-		Toast,
-		Footer
+		Toast
 	} from 'flowbite-svelte';
 	import { toast } from '$lib/store';
 	import { goto } from '$app/navigation';

@@ -8,7 +8,7 @@ export const prerender = false;
 async function getParcels(pageNumber: number, filter: string = '') {
 	// Get data from db
 	let connection;
-	let parcels: any[] = [];
+	let parcels: App.Parcel[] = [];
 
 	connection = await oracledb.getConnection({
 		user: env.DBUSER,
@@ -30,16 +30,25 @@ async function getParcels(pageNumber: number, filter: string = '') {
 	}
 	console.log('Received data from db!');
 
-	parcels = result.rows as any[];
-	await connection.close();
+	result.rows?.map((item: any) => {
+		parcels.push({
+			uniqname: item.ACTION_TECH_EMAIL,
+			workstation: item.WORKSTATION_CODE,
+			carrier: item.CARRIER,
+			trackingNumber: item.TRACKING_INBOUND,
+			routingLocation: item.PARCEL_ROUTING_CODE,
+			TCDI: item.TCDI,
+			kitID: item.KIT_ID_NUMBER,
+		});
+	});
 
+	await connection.close();
 	return JSON.stringify(parcels);
 }
 
 async function getParcelCount(filter: string | null = null) {
 	// Get data from db
 	let connection;
-	let parcels: any[] = [];
 
 	connection = await oracledb.getConnection({
 		user: env.DBUSER,
@@ -64,15 +73,15 @@ async function getParcelCount(filter: string | null = null) {
 export const load = (async ({ locals, url }) => {
 	// Redirect to login if user doesn't exist
 	let redirectUrl = new URL(url.origin);
-	redirectUrl.pathname = "/login";
+	redirectUrl.pathname = '/login';
 	if (!locals.user) {
-		redirectUrl.searchParams.append("redirect", url.pathname);
+		redirectUrl.searchParams.append('redirect', url.pathname);
 		throw redirect(302, redirectUrl.href);
 	}
 
 	// Redirect to login if unauthorized
 	if (!locals.user.auth) {
-		redirectUrl.searchParams.append("err", "unauthorized");
+		redirectUrl.searchParams.append('err', 'unauthorized');
 		throw redirect(302, redirectUrl.href);
 	}
 

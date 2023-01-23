@@ -8,13 +8,12 @@
 	export let form: HTMLFormElement;
 	export let data: PageData;
 	var charArray: string[] = [];
-	let ParcelOpening = {
-		ReceiverID: 'John',
-		workstationCode: '',
-		TrackingNumber: '',
-		TCDI: '',
-		kitID: ''
-	};
+	let uniqname: string;
+	let workstation: string;
+	let trackingNumber: string;
+	let carrier: string;
+	let TCDI: string;
+	let kitID: string;
 	let isWorkstation: boolean;
 
 	function onKeypress(event: KeyboardEvent) {
@@ -25,12 +24,12 @@
 			let tracknum = charArray.join('');
 			charArray = [];
 
-			if (ParcelOpening.TrackingNumber === tracknum) {
+			if (trackingNumber === tracknum) {
 				form.requestSubmit();
 				return;
 			}
 
-			ParcelOpening.TrackingNumber = tracknum;
+			trackingNumber = tracknum;
 		}
 	}
 
@@ -41,10 +40,10 @@
 	onMount(() => {
 		if (data.user) {
 			if (data.user.auth === false) {
-				ParcelOpening.workstationCode = data.user.username;
+				workstation = data.user.username;
 				isWorkstation = true;
 			} else {
-				ParcelOpening.ReceiverID = data.user.username;
+				uniqname = data.user.username;
 				isWorkstation = false;
 			}
 		}
@@ -54,7 +53,7 @@
 <svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Opening</h1>
-{#if ParcelOpening.TrackingNumber}
+{#if trackingNumber}
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan again to add</h2>
 {:else}
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan parcel or add tracking number</h2>
@@ -73,7 +72,7 @@
 					toast.set(
 						JSON.stringify({ message: 'Sucessfully added parcel!', success: 'true', show: 'true' })
 					);
-					ParcelOpening.TrackingNumber = '';
+					trackingNumber = '';
 				} else if (result.type == 'failure') {
 					toast.set(
 						JSON.stringify({ message: result.data?.message, success: 'false', show: 'true' })
@@ -85,15 +84,15 @@
 		}}
 	>
 		<div class="mb-6">
-			<Label for="user" class="mb-2">
+			<Label for="uniqname" class="mb-2">
 				<div class="text-white">User</div>
 			</Label>
 			<Input
 				type="text"
-				id="user"
-				name="user"
+				id="uniqname"
+				name="uniqname"
 				tabindex="-1"
-				bind:value={ParcelOpening.ReceiverID}
+				bind:value={uniqname}
 				on:change={clearArray}
 				required
 			/>
@@ -106,9 +105,9 @@
 			{#if isWorkstation}
 				<Input
 					id="workstation"
-					name="workstationCode"
+					name="workstation"
 					tabindex="-1"
-					bind:value={ParcelOpening.workstationCode}
+					bind:value={workstation}
 					class="mt-2"
 					readonly
 					required
@@ -116,9 +115,9 @@
 			{:else}
 				<Input
 					id="workstation"
-					name="workstationCode"
+					name="workstation"
 					tabindex="-1"
-					bind:value={ParcelOpening.workstationCode}
+					bind:value={workstation}
 					class="mt-2"
 					required
 				/>
@@ -126,30 +125,30 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="tracknum" class="mb-2">
+			<Label for="trackingNumber" class="mb-2">
 				<div class="text-white">Tracking Number</div>
 			</Label>
 			<Input
 				type="text"
-				id="tracknum"
-				name="trackNumber"
+				id="trackingNumber"
+				name="trackingNumber"
 				tabindex="-1"
-				bind:value={ParcelOpening.TrackingNumber}
+				bind:value={trackingNumber}
 				placeholder="1Z 6F8..."
 				required
 			/>
 		</div>
 
 		<div class="mb-6">
-			<Label for="tcdi" class="mb-2">
+			<Label for="TCDI" class="mb-2">
 				<div class="text-white">TCDI</div>
 			</Label>
 			<Input
 				type="text"
-				id="tcdi"
-				name="tcdi"
+				id="TCDI"
+				name="TCDI"
 				tabindex="-1"
-				bind:value={ParcelOpening.TCDI}
+				bind:value={TCDI}
 				placeholder="TR..."
 				required
 			/>
@@ -164,7 +163,7 @@
 				id="kitID"
 				name="kitID"
 				tabindex="-1"
-				bind:value={ParcelOpening.kitID}
+				bind:value={kitID}
 				placeholder="K202..."
 				required
 			/>

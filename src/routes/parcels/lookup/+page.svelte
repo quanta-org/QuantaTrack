@@ -2,8 +2,6 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import {
-		Card,
-		Input,
 		Pagination,
 		Search,
 		Button,
@@ -18,9 +16,10 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { toast } from '$lib/store';
-	import { enhance } from '$app/forms';
 
 	export let data: PageData;
+	let parcels: App.Parcel[];
+	$: parcels = JSON.parse(data.parcels);
 	let filter: string = data.filter ?? '';
 	$: activePageNumber = $page.url.searchParams.get('page') ?? '1';
 	let pages: { name: number; href: string; active: boolean }[] = [];
@@ -102,45 +101,37 @@
 			<TableHeadCell>Date</TableHeadCell>
 			<TableHeadCell>TCDI</TableHeadCell>
 			<TableHeadCell>Kit #</TableHeadCell>
-			<TableHeadCell>Owner #</TableHeadCell>
-			<TableHeadCell>Order #</TableHeadCell>
-			<TableHeadCell>Clinic #</TableHeadCell>
+			<TableHeadCell>Kit Type</TableHeadCell>
 		</TableHead>
 		<TableBody tableBodyClass="divide-y">
-			{#each JSON.parse(data.parcels) as parcel}
-				<TableBodyRow>
+			{#each parcels as parcel}
+				<TableBodyRow color={parcel.TCDI ? parcel.kitType ? "red" : "green" : "blue"}>
 					<TableBodyCell>
-						{parcel.TRACKING_INBOUND}
+						{parcel.trackingNumber}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.ACTION_TECH_EMAIL}
+						{parcel.uniqname}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.WORKSTATION_CODE}
+						{parcel.workstation}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.CARRIER}
+						{parcel.carrier}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.PARCEL_ROUTING_CODE}
+						{parcel.routingLocation}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.ACTION_DATE}
+						{parcel.date}
 					</TableBodyCell>
 					<TableBodyCell>
 						{parcel.TCDI}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.KIT_ID_NUMBER}
+						{parcel.kitID}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.ACTION_OWNER_BARCODE}
-					</TableBodyCell>
-					<TableBodyCell>
-						{parcel.ORDER_NUMBER}
-					</TableBodyCell>
-					<TableBodyCell>
-						{parcel.CLINIC_CODE}
+						{parcel.kitType}
 					</TableBodyCell>
 				</TableBodyRow>
 			{/each}
