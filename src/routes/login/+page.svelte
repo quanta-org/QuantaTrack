@@ -42,8 +42,10 @@
 <svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
 
 <div class="flex justify-center">
-	<div class="flex flex-wrap mb-4 bg-gray-200 p-10 rounded gap-10 justify-center">
-		<img src="U-of-M-Logo.png" alt="U of M logo" class="h-36 justify-self-center" />
+	<div class="flex mb-4 bg-gray-200 p-10 rounded gap-10 justify-center">
+		<div class="shrink self-center">
+			<img src="U-of-M-Logo.png" alt="U of M logo" class="max-h-36" />
+		</div>
 		<h2 class="self-center text-4xl font-bold text-blue-900">Level-2 Login</h2>
 	</div>
 </div>
