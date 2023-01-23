@@ -19,6 +19,7 @@ services:
       DBUSER: ${DBUSER}
       DBUSERPASS: ${DBUSERPASS}
       JWTSECRETKEY: ${JWTSECRETKEY}
+      ORIGIN: ${ORIGIN}
   sao_oracle:
     container_name: sao_oracle
     ports:
