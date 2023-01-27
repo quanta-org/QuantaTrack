@@ -10,7 +10,8 @@
 		TableBodyCell,
 		TableBodyRow,
 		TableHead,
-		TableHeadCell
+		TableHeadCell,
+		Spinner
 	} from 'flowbite-svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -23,6 +24,7 @@
 	let filter: string = data.filter ?? '';
 	$: activePageNumber = $page.url.searchParams.get('page') ?? '1';
 	let pages: { name: number; href: string; active: boolean }[] = [];
+	let isLoading: boolean = false;
 
 	$: {
 		// Set pages to the correct # of pages
@@ -85,7 +87,13 @@
 	<form class="flex gap-2 w-96" action="?/" method="get">
 		<input type="hidden" name="page" value={activePageNumber} />
 		<Search name="q" bind:value={filter}>
-			<Button type="submit">Search</Button>
+			{#if isLoading}
+				<Button>
+					<Spinner class="mr-3" size="4" color="white" /> Submitting ...
+				</Button>
+			{:else}
+				<Button type="submit" tabindex="-1">Search</Button>
+			{/if}
 		</Search>
 	</form>
 </div>
@@ -101,11 +109,10 @@
 			<TableHeadCell>Date</TableHeadCell>
 			<TableHeadCell>TCDI</TableHeadCell>
 			<TableHeadCell>Kit #</TableHeadCell>
-			<TableHeadCell>Kit Type</TableHeadCell>
 		</TableHead>
 		<TableBody tableBodyClass="divide-y">
 			{#each parcels as parcel}
-				<TableBodyRow color={parcel.TCDI ? parcel.kitType ? "red" : "green" : "blue"}>
+				<TableBodyRow>
 					<TableBodyCell>
 						{parcel.trackingNumber}
 					</TableBodyCell>
@@ -122,16 +129,13 @@
 						{parcel.routingLocation}
 					</TableBodyCell>
 					<TableBodyCell>
-						{parcel.date}
+						{new Date(parcel.date).toLocaleDateString()}
 					</TableBodyCell>
 					<TableBodyCell>
 						{parcel.TCDI}
 					</TableBodyCell>
 					<TableBodyCell>
 						{parcel.kitID}
-					</TableBodyCell>
-					<TableBodyCell>
-						{parcel.kitType}
 					</TableBodyCell>
 				</TableBodyRow>
 			{/each}

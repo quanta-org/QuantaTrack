@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
-	import { Input, Label, Button } from 'flowbite-svelte';
+	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
 	import { toast } from '$lib/store';
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 
 	export let form: HTMLFormElement;
 	export let data: PageData;
@@ -11,10 +11,10 @@
 	let uniqname: string;
 	let workstation: string;
 	let trackingNumber: string;
-	let carrier: string;
 	let TCDI: string;
 	let kitID: string;
 	let isWorkstation: boolean;
+	let isLoading: boolean = false;
 
 	function onKeypress(event: KeyboardEvent) {
 		if (event.key.length == 1) {
@@ -67,6 +67,7 @@
 		action="?/addParcelOpening"
 		bind:this={form}
 		use:enhance={({}) => {
+			isLoading = true;
 			return async ({ result, update }) => {
 				if (result.type == 'success') {
 					toast.set(
@@ -79,13 +80,14 @@
 					);
 				}
 
+				isLoading = false;
 				update({ reset: false });
 			};
 		}}
 	>
 		<div class="mb-6">
 			<Label for="uniqname" class="mb-2">
-				<div class="text-white">User</div>
+				<div class="text-white">Uniqname</div>
 			</Label>
 			<Input
 				type="text"
@@ -170,7 +172,13 @@
 		</div>
 
 		<div class="flex justify-center">
-			<Button type="submit" tabindex="-1">Add Receipt</Button>
+			{#if isLoading}
+				<Button>
+					<Spinner class="mr-3" size="4" color="white" /> Submitting ...
+				</Button>
+			{:else}
+				<Button type="submit" tabindex="-1">Add Receipt</Button>
+			{/if}
 		</div>
 	</form>
 </div>

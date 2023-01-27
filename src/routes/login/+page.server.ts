@@ -1,6 +1,5 @@
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-import { authenticate } from 'ldap-authentication';
 import jsonwebtoken from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 
@@ -16,15 +15,15 @@ export const actions: Actions = {
 		const username = data.get('username');
 		const password = data.get('password');
 
-		// TODO: LDAP authentication
-		/*
-        let authenticated = await authenticate({
-            ldapOpts: { url: 'ldap://ldap.ent.med.umich.edu:636', connectTimeout: 5000 },
-            userDn: 'uid=' + username + ',dc=med,dc=umich,dc=edu',
-            userPassword: password as string,
-        })*/
+		let userdata = await event.fetch("https://slidetracker.med.umich.edu/trylogin", {
+			 method: 'POST',
+			 headers: {
+				'Content-Type': 'application/json'
+			 },
+			 body: '{"uniqname":"' + username + '","password":"' + password + '"}'
+		});
 
-		if (username !== 'trevor' || password !== 'password') {
+		if(await userdata.text() === 'no'){
 			return fail(401, { message: 'Invalid username or password.' });
 		}
 
@@ -38,7 +37,7 @@ export const actions: Actions = {
 		console.log('User ' + username + ' logged in.');
 
 		if (
-			event.url.searchParams.get('redirect') &&
+			event.url.searchParams.has('redirect') &&
 			event.url.searchParams.get('redirect') !== 'null'
 		) {
 			throw redirect(302, event.url.searchParams.get('redirect') as string);

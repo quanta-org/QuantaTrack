@@ -5,9 +5,11 @@ volumes:
 
 services:
   sao_svelte:
+    network_mode: "host"
     build:
       context: .
       dockerfile: Dockerfile.dev
+      network: host
     container_name: sao_svelte
     ports:
       - '5173:5173'
@@ -19,14 +21,15 @@ services:
       DBUSER: ${DBUSER}
       DBUSERPASS: ${DBUSERPASS}
       JWTSECRETKEY: ${JWTSECRETKEY}
-  sao_oracle:
-    container_name: sao_oracle
-    ports:
-      - '1521:1521'
-    environment:
-      ORACLE_PASSWORD: ${DBPASS}
-      APP_USER: ${DBUSER}
-      APP_USER_PASSWORD: ${DBUSERPASS}
-    volumes:
-      - oracle_volume:/opt/oracle/oradata
-    image: gvenzl/oracle-xe
+  #sao_oracle:
+  #  container_name: sao_oracle
+  #  network_mode: "host"
+  #  ports:
+  #    - '1521:1521'
+  #  environment:
+  #    ORACLE_PASSWORD: ${DBPASS}
+  #    APP_USER: ${DBUSER}
+  #    APP_USER_PASSWORD: ${DBUSERPASS}
+  #  volumes:
+  #    - oracle_volume:/opt/oracle/oradata
+  #  image: gvenzl/oracle-xe

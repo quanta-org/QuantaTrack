@@ -1,9 +1,6 @@
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
-import { env } from '$env/dynamic/private';
-import oracledb from 'oracledb';
 import { fail, redirect } from '@sveltejs/kit';
-
-export const prerender = false;
+import { addParcel, getParcel } from '$lib/parcels';
 
 export const load = (async ({ locals, url }) => {
 	// Redirect to login if user doesn't exist
@@ -42,29 +39,17 @@ export const actions: Actions = {
 			return fail(400, { message: 'Could not add parcel, check form!' });
 		}
 
-		let connection;
-
 		try {
-			connection = await oracledb.getConnection({
-				user: env.DBUSER,
-				password: env.DBUSERPASS,
-				connectionString: env.DB
-			});
 
-			// Check if parcel already in table
-			const sqlSearch = `SELECT TRACKING_INBOUND FROM ParcelOpening WHERE TRACKING_INBOUND = :1`;
-			let result = await connection.execute(sqlSearch, [parcel.trackingNumber], {
-				outFormat: oracledb.OUT_FORMAT_OBJECT
-			});
-			if (result.rows) {
-				return fail(400, { message: 'Parcel already added!' });
+			if(!await getParcel(parcel.trackingNumber, "receipt")){
+				return fail(400, { message: 'Parcel not in receipt table!'});
 			}
 
-			// Insert data into table
-			const sql = `INSERT INTO ParcelOpening (ACTION_TECH_EMAIL, WORKSTATION_CODE, TRACKING_INBOUND, TCDI, KIT_ID_NUMBER) VALUES (:1, :2, :3, :4, :5)`;
-			await connection.execute(sql, [parcel.uniqname, parcel.workstation, parcel.trackingNumber, parcel.TCDI, parcel.kitID]);
-			connection.commit();
-			console.log('Pushed data to OpeningReceipt!');
+			if(await getParcel(parcel.trackingNumber, "opening")){
+				return fail(400, { message: 'Parcel already in opening table!'});
+			}
+
+			await addParcel(parcel, "opening");
 
 			return { success: true };
 		} catch (err) {

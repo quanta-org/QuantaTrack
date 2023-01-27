@@ -1,74 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { env } from '$env/dynamic/private';
-import oracledb from 'oracledb';
-
-export const prerender = false;
-
-async function getParcels(pageNumber: number, filter: string = '') {
-	// Get data from db
-	let connection;
-	let parcels: App.Parcel[] = [];
-
-	connection = await oracledb.getConnection({
-		user: env.DBUSER,
-		password: env.DBUSERPASS,
-		connectionString: env.DB
-	});
-
-	let result;
-	let end = pageNumber * 50;
-	let start = end - 50;
-	if (filter != '') {
-		const sql = `select * from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND WHERE PARCELRECEIPT.TRACKING_INBOUND LIKE '%' || :1 || '%' OFFSET :2 ROWS FETCH NEXT :3 ROWS ONLY`;
-		result = await connection.execute(sql, [filter, start, end], {
-			outFormat: oracledb.OUT_FORMAT_OBJECT
-		});
-	} else {
-		const sql = `select * from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND OFFSET :1 ROWS FETCH NEXT :2 ROWS ONLY`;
-		result = await connection.execute(sql, [start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-	}
-	console.log('Received data from db!');
-
-	result.rows?.map((item: any) => {
-		parcels.push({
-			uniqname: item.ACTION_TECH_EMAIL,
-			workstation: item.WORKSTATION_CODE,
-			carrier: item.CARRIER,
-			trackingNumber: item.TRACKING_INBOUND,
-			routingLocation: item.PARCEL_ROUTING_CODE,
-			TCDI: item.TCDI,
-			kitID: item.KIT_ID_NUMBER,
-		});
-	});
-
-	await connection.close();
-	return JSON.stringify(parcels);
-}
-
-async function getParcelCount(filter: string | null = null) {
-	// Get data from db
-	let connection;
-
-	connection = await oracledb.getConnection({
-		user: env.DBUSER,
-		password: env.DBUSERPASS,
-		connectionString: env.DB
-	});
-
-	let result;
-	if (filter && filter != '') {
-		let sql = `select COUNT(*) from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND WHERE PARCELRECEIPT.TRACKING_INBOUND LIKE '%' || :1 || '%'`;
-		result = await connection.execute(sql, [filter], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-	} else {
-		let sql = `select COUNT(*) from PARCELRECEIPT LEFT OUTER JOIN PARCELOPENING ON PARCELRECEIPT.TRACKING_INBOUND = PARCELOPENING.TRACKING_INBOUND`;
-		result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-	}
-	await connection.close();
-
-	let count = result.rows?.at(0) as any;
-	return count['COUNT(*)'];
-}
+import { getParcels, getParcelCount } from '$lib/parcels';
 
 export const load = (async ({ locals, url }) => {
 	// Redirect to login if user doesn't exist
@@ -95,10 +27,10 @@ export const load = (async ({ locals, url }) => {
 	let filter = url.searchParams.get('q') ?? '';
 
 	// Get data from db
-	let parcelData: string;
+	let parcels: App.Parcel[];
 	let parcelCount: number;
 	try {
-		parcelData = await getParcels(pageNumber, filter);
+		parcels = await getParcels(pageNumber, filter);
 		parcelCount = await getParcelCount(filter);
 	} catch (err) {
 		console.log(err);
@@ -110,7 +42,7 @@ export const load = (async ({ locals, url }) => {
 	}
 
 	return {
-		parcels: parcelData,
+		parcels: JSON.stringify(parcels),
 		pageCount: Math.ceil(parcelCount / 50),
 		filter
 	};
