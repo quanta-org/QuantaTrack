@@ -20,6 +20,9 @@ declare namespace App {
 		// Optional sending data
 		client?: string,
 		kitType?: string,
+		kitBarcode?: string,
+		trackingNumberOutbound?: string,
+		clinicCode?: string,
 
 		// Optional receiving data
 		routingLocation?: string,

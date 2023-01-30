@@ -1,7 +1,7 @@
 import oracledb from 'oracledb';
 import { env } from '$env/dynamic/private';
 
-export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening') {
+export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening' | 'assembly') {
 	let connection = await oracledb.getConnection({
 		user: env.DBUSER,
 		password: env.DBUSERPASS,
@@ -17,7 +17,7 @@ export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening'
 			parcel.trackingNumber,
 			parcel.routingLocation
 		]);
-	} else {
+	} else if (table === 'opening') {
 		let sql = `INSERT INTO ParcelOpening (ACTION_TECH_EMAIL, WORKSTATION_CODE, TRACKING_INBOUND, TCDI, KIT_ID_NUMBER) VALUES (:1, :2, :3, :4, :5)`;
 		await connection.execute(sql, [
 			parcel.uniqname,
@@ -26,6 +26,19 @@ export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening'
 			parcel.TCDI,
 			parcel.kitID
 		]);
+	} else if (table === 'assembly') {
+		let sql = `INSERT INTO ParcelAssembly (ACTION_TECH_EMAIL, WORKSTATION_CODE, CLIENT, CARRIER, MATERIAL_NAME, MATERIAL_BARCODE, TRACKING_INBOUND, TRACKING_OUTBOUND, CLINIC_CODE) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9)`;
+		await connection.execute(sql, [
+			parcel.uniqname,
+			parcel.workstation,
+			parcel.client,
+			parcel.carrier,
+			parcel.kitType,
+			parcel.kitID,
+			parcel.trackingNumber,
+			parcel.trackingNumberOutbound,
+			parcel.clinicCode
+		]);
 	}
 
 	connection.commit();
@@ -33,7 +46,7 @@ export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening'
 	console.log("Successfully added parcel " + parcel.trackingNumber + " to " + table);
 }
 
-export async function getParcel(trackingNumber: string, table: 'receipt' | 'opening') {
+export async function getParcel(trackingNumber: string, table: 'receipt' | 'opening' | 'assembly') {
 	let parcel: App.Parcel;
 	let connection = await oracledb.getConnection({
 		user: env.DBUSER,
@@ -44,8 +57,10 @@ export async function getParcel(trackingNumber: string, table: 'receipt' | 'open
 	let sqlSearch;
 	if (table === 'receipt') {
 		sqlSearch = `SELECT * FROM ParcelReceipt WHERE TRACKING_INBOUND = :1`;
-	} else {
+	} else if (table === 'opening') {
 		sqlSearch = `SELECT * FROM ParcelOpening WHERE TRACKING_INBOUND = :1`;
+	} else {
+		sqlSearch = `SELECT * FROM ParcelAssembly WHERE TRACKING_INBOUND = :1`;
 	}
 
 	let result = await connection.execute(sqlSearch, [trackingNumber], {

@@ -220,7 +220,7 @@
 					<Spinner class="mr-3" size="4" color="white" /> Submitting ...
 				</Button>
 			{:else}
-				<Button type="submit" tabindex="-1">Add Receipt</Button>
+				<Button type="submit" tabindex="-1">Add</Button>
 			{/if}
 		</div>
 	</form>

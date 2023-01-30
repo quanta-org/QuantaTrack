@@ -100,6 +100,7 @@
 		>
 
 		<Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
+			<DropdownItem href="/parcels/assembly">Assembly</DropdownItem>
 			<DropdownItem href="/parcels/receipt">Receipt</DropdownItem>
 			<DropdownItem href="/parcels/opening">Opening</DropdownItem>
 			<DropdownDivider />
