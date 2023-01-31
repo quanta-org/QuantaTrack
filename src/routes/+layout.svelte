@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import {
 		Navbar,
@@ -49,10 +48,6 @@
 
 			toast.set(JSON.stringify({ message: '', success: 'false', show: 'false' }));
 		}
-	});
-
-	onMount(() => {
-		document.documentElement.classList.add('dark');
 	});
 </script>
 

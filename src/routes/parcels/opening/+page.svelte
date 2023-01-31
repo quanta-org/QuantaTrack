@@ -21,15 +21,16 @@
 			charArray.push(event.key);
 		} else if (event.key == 'Tab' && charArray.length >= 10) {
 			event.preventDefault();
-			let tracknum = charArray.join('');
+			let scanInput = charArray.join('');
 			charArray = [];
 
-			if (trackingNumber === tracknum) {
-				form.requestSubmit();
-				return;
+			if (trackingNumber == '') {
+				trackingNumber = scanInput;
+			} else if (TCDI == '') {
+				TCDI = scanInput;
+			} else if (kitID == '') {
+				kitID = scanInput;
 			}
-
-			trackingNumber = tracknum;
 		}
 	}
 
@@ -53,10 +54,14 @@
 <svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Opening</h1>
-{#if trackingNumber}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan again to add</h2>
+{#if trackingNumber == ''}
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan parcel</h2>
+{:else if TCDI == ''}
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan tray</h2>
+{:else if kitID == ''}
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan kit</h2>
 {:else}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan parcel or add tracking number</h2>
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Ready to submit!</h2>
 {/if}
 
 <div class="flex justify-center">
@@ -167,7 +172,6 @@
 				tabindex="-1"
 				bind:value={kitID}
 				placeholder="K202..."
-				required
 			/>
 		</div>
 

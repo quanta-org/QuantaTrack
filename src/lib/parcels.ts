@@ -120,7 +120,7 @@ export async function getParcels(pageNumber: number = 1, filter: string = '') {
 			carrier: item.CARRIER,
 			trackingNumber: item.TRACKING_INBOUND,
 			routingLocation: item.PARCEL_ROUTING_CODE,
-			date: item.ACTION_DATE,
+			date: item.ACTION_DATE_1 ?? item.ACTION_DATE,
 			TCDI: item.TCDI,
 			kitID: item.KIT_ID_NUMBER
 		});

@@ -60,17 +60,14 @@
 	}
 
 	function deleteParcel(index: number){
-		if(trackingNumber[index - 1] != ""){
+		if(index == trackingNumber.length - 1){
 			trackingNumber[index] = "";
 			kitID[index] = "";
-		} else if(index != 0){
+		} else {
 			trackingNumber.splice(index, 1);
 			kitID.splice(index, 1);
 			trackingNumber = trackingNumber;
 			kitID = kitID;
-		} else {
-			trackingNumber[0] = "";
-			kitID[0] = "";
 		}
 	}
 
@@ -170,7 +167,7 @@
 
 		<div class="mb-6">
 			<Label for="client" class="mb-2">
-				<div class="text-white">Client</div>
+				<div class="text-white">Clinic Code</div>
 			</Label>
 			<Input
 				type="text"
@@ -216,7 +213,7 @@
 					<Label for="trackingNumber{index}" class="mb-2">
 						<div class="text-white">Kit {index + 1}</div>
 					</Label>
-					<button type="button" class="text-white order-last cursor-pointer" on:click={() => {deleteParcel(index)}}>
+					<button type="button" tabindex="-1" class="text-white order-last cursor-pointer" on:click={() => {deleteParcel(index)}}>
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
 						</svg>
