@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
-	import { toast } from '$lib/store';
+	import { toast, isScanning } from '$lib/store';
 	import type { PageData } from './$types';
 	export let data: PageData;
 
@@ -16,12 +16,11 @@
 	let kitID: string[] = [''];
 	let isWorkstation: boolean;
 	let isLoading: boolean = false;
-	let isScanning: boolean = false;
-	let key: string = 'init';
+	let scanning: boolean = false;
+
+	$: scanning ? isScanning.set("true") : isScanning.set("false");
 
 	function onKeydown(event: KeyboardEvent) {
-		key = event.key;
-
 		// If key length is one, add to array
 		if (event.key.length == 1) {
 			charArray.push(event.key);
@@ -34,19 +33,13 @@
 
 			// If the key is unidentified, start scanning
 		} else if (event.key == 'Unidentified') {
-			isScanning = true;
-		}
-	}
-
-	function onKeypress(event: KeyboardEvent) {
-		if (isScanning) {
-			charArray.push(event.key);
+			scanning = true;
 		}
 	}
 
 	function onKeyup(event: KeyboardEvent) {
 		if (event.key == 'Unidentified' && isScanning) {
-			isScanning = false;
+			scanning = false;
 			addScan(charArray.join(''));
 			charArray = [];
 		}
@@ -112,7 +105,6 @@
 
 <svelte:window
 	on:keydown={onKeydown}
-	on:keypress={onKeypress}
 	on:keyup={onKeyup}
 	on:mousemove={clearArray}
 />
@@ -126,12 +118,6 @@
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan kit ID</h2>
 {:else}
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan tracking number</h2>
-{/if}
-
-{#if isScanning}
-	<h2 class="text-white font-bold text-2xl">SCANNING! {key}</h2>
-{:else}
-	<h2 class="text-white font-bold text-2xl">NOT SCANNING {key}</h2>
 {/if}
 
 <div class="flex justify-center pb-10">

@@ -1,3 +1,4 @@
 import { writable } from 'svelte/store';
 
 export let toast = writable(JSON.stringify({ message: '', success: 'false', show: 'false' }));
+export let isScanning = writable("false");

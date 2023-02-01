@@ -14,7 +14,7 @@
 		Button,
 		Toast
 	} from 'flowbite-svelte';
-	import { toast } from '$lib/store';
+	import { toast, isScanning } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
@@ -23,6 +23,7 @@
 	let toastSuccess: boolean = false;
 	let toastError: boolean = false;
 	let toastMessage: string = '';
+	let scanning: boolean = false;
 
 	async function logout() {
 		await fetch(`/login?/logout`, { method: 'POST', body: new FormData() });
@@ -49,6 +50,14 @@
 			toast.set(JSON.stringify({ message: '', success: 'false', show: 'false' }));
 		}
 	});
+
+	isScanning.subscribe((scanner) => {
+		if(scanner === 'true') {
+			scanning = true;
+		} else {
+			scanning = false;
+		}
+	})
 </script>
 
 
@@ -161,7 +170,7 @@
 	</Toast>
 </div>
 
-<div class="bg-gray-900 min-h-screen w-full bg-plus">
+<div class="bg-gray-900 min-h-screen w-full bg-plus {scanning ? "border-x-8 border-green-500" : ""}">
 	<div class="mx-auto pt-10 h-full">
 		<slot />
 	</div>
