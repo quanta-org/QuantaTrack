@@ -34,7 +34,7 @@ export const actions: Actions = {
 			{ expiresIn: '8h' }
 		);
 
-		event.cookies.set('jwt', token, { path: '/' });
+		event.cookies.set('jwt', token, { path: '/', secure: false });
 		console.log('User ' + username + ' logged in.');
 
 		if (redirectUrl && redirectUrl !== 'null') {
