@@ -3,10 +3,9 @@
 	import { enhance } from '$app/forms';
 	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
 	import { toast } from '$lib/store';
-	import type { PageData, ActionData } from './$types';
-
-	export let form: HTMLFormElement;
+	import type { PageData } from './$types';
 	export let data: PageData;
+
 	var charArray: string[] = [];
 	let uniqname: string;
 	let workstation: string;
@@ -18,8 +17,11 @@
 	let isWorkstation: boolean;
 	let isLoading: boolean = false;
 	let isScanning: boolean = false;
+	let key: string = 'init';
 
 	function onKeydown(event: KeyboardEvent) {
+		key = event.key;
+
 		// If key length is one, add to array
 		if (event.key.length == 1) {
 			charArray.push(event.key);
@@ -126,13 +128,18 @@
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan tracking number</h2>
 {/if}
 
+{#if isScanning}
+	<h2 class="text-white font-bold text-2xl">SCANNING! {key}</h2>
+{:else}
+	<h2 class="text-white font-bold text-2xl">NOT SCANNING {key}</h2>
+{/if}
+
 <div class="flex justify-center pb-10">
 	<form
 		id="form"
 		method="POST"
 		class="w-96 p-5 bg-gray-800 rounded-xl"
 		action="?/addKitAssembly"
-		bind:this={form}
 		use:enhance={({}) => {
 			isLoading = true;
 			return async ({ result, update }) => {
