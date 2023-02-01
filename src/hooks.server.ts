@@ -1,4 +1,4 @@
-import { redirect, type Handle } from '@sveltejs/kit';
+import type { Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import jsonwebtoken from 'jsonwebtoken';
 
@@ -14,10 +14,9 @@ export const handle = (async ({ event, resolve }) => {
 
 			event.locals.user = decoded;
 		} catch (e) {
-			if (e instanceof jsonwebtoken.TokenExpiredError) {
+			if (e instanceof jsonwebtoken.TokenExpiredError || e instanceof jsonwebtoken.JsonWebTokenError) {
 				event.cookies.delete('jwt');
 				event.locals.user = null;
-				throw redirect(302, '/login');
 			} else {
 				console.log(e);
 			}

@@ -14,16 +14,17 @@ export const actions: Actions = {
 		const data = await event.request.formData();
 		const username = data.get('username');
 		const password = data.get('password');
+		const redirectUrl = data.get('redirect');
 
-		let userdata = await event.fetch("https://slidetracker.med.umich.edu/trylogin", {
-			 method: 'POST',
-			 headers: {
+		let userdata = await event.fetch('https://slidetracker.med.umich.edu/trylogin', {
+			method: 'POST',
+			headers: {
 				'Content-Type': 'application/json'
-			 },
-			 body: '{"uniqname":"' + username + '","password":"' + password + '"}'
+			},
+			body: '{"uniqname":"' + username + '","password":"' + password + '"}'
 		});
 
-		if(await userdata.text() === 'no'){
+		if ((await userdata.text()) === 'no') {
 			return fail(401, { message: 'Invalid username or password.' });
 		}
 
@@ -36,14 +37,11 @@ export const actions: Actions = {
 		event.cookies.set('jwt', token, { path: '/' });
 		console.log('User ' + username + ' logged in.');
 
-		if (
-			event.url.searchParams.has('redirect') &&
-			event.url.searchParams.get('redirect') !== 'null'
-		) {
-			throw redirect(302, event.url.searchParams.get('redirect') as string);
+		if (redirectUrl && redirectUrl !== 'null') {
+			throw redirect(302, redirectUrl as string);
 		}
 
-		throw redirect(307, '/');
+		throw redirect(302, '/');
 	},
 
 	stationlogin: async (event: RequestEvent) => {
@@ -58,15 +56,6 @@ export const actions: Actions = {
 
 		event.cookies.set('jwt', token);
 		console.log('Station ' + stationid + ' logged in.');
-
-		if (
-			event.url.searchParams.get('redirect') &&
-			event.url.searchParams.get('redirect') !== 'null'
-		) {
-			throw redirect(302, event.url.searchParams.get('redirect') as string);
-		}
-
-		throw redirect(302, '/');
 	},
 
 	logout: async (event: RequestEvent) => {

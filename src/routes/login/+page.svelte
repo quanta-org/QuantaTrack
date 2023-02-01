@@ -27,7 +27,7 @@
 			await invalidateAll();
 
 			if ($page.url.searchParams.has('redirect')) {
-				await goto($page.url.searchParams.get('redirect') ?? '');
+				await goto($page.url.searchParams.get('redirect') as string);
 			} else {
 				await goto('/');
 			}
@@ -54,7 +54,7 @@
 	{#if !data.user}
 		<form
 			method="POST"
-			action="?/login&redirect={$page.url.searchParams.get('redirect')}"
+			action="?/login"
 			class="p-5 w-96 bg-gray-800 rounded-xl"
 			use:enhance={({}) => {
 				return async ({ result, update }) => {
@@ -75,6 +75,7 @@
 
 			<h2 class="text-white text-xl text-center">or</h2>
 
+			<input name="redirect" class="hidden" type="hidden" value={$page.url.searchParams.get('redirect')}>
 			<Label class="mb-2">
 				<div class="text-white">User Name:</div>
 				<Input name="username" type="text" bind:value={username} required color={undefined} />
