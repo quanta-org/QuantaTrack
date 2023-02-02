@@ -60,9 +60,9 @@ export const actions: Actions = {
 
 	logout: async (event: RequestEvent) => {
 		console.log('User ' + event.locals.user?.username + ' logged out.');
-		event.cookies.delete('jwt');
+		event.cookies.delete('jwt', { path: '/', secure: false });
 		event.locals.user = null;
 
-		return { success: true };
+		throw redirect(302, '/');
 	}
 };

@@ -22,7 +22,7 @@ export const handle = (async ({ event, resolve }) => {
 			event.locals.user = decoded;
 		} catch (e) {
 			if (e instanceof jsonwebtoken.TokenExpiredError || e instanceof jsonwebtoken.JsonWebTokenError) {
-				event.cookies.delete('jwt');
+				event.cookies.delete('jwt', { path: '/', secure: false });
 				event.locals.user = null;
 			} else {
 				console.log(e);
