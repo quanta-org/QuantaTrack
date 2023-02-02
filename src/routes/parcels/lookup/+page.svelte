@@ -3,7 +3,6 @@
 	import {
 		Pagination,
 		Search,
-		Button,
 		Table,
 		TableBody,
 		TableBodyCell,

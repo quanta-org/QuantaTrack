@@ -7,14 +7,12 @@
 	export let data: PageData;
 
 	var charArray: string[] = [];
-	let uniqname: string;
 	let workstation: string;
 	let trackingNumberOutbound: string;
 	let client: string;
 	let kitType: string;
 	let trackingNumber: string[] = [''];
 	let kitID: string[] = [''];
-	let isWorkstation: boolean;
 	let isLoading: boolean = false;
 
 	function onKeydown(event: KeyboardEvent) {
@@ -86,21 +84,14 @@
 	function clearArray() {
 		charArray = [];
 	}
-
-	onMount(() => {
-		if (data.user) {
-			if (data.user.auth === false) {
-				workstation = data.user.username;
-				isWorkstation = true;
-			} else {
-				uniqname = data.user.username;
-				isWorkstation = false;
-			}
-		}
-	});
 </script>
 
-<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray}  />
+<svelte:window
+	on:keydown={onKeydown}
+	on:keyup={onKeyup}
+	on:mousemove={clearArray}
+	on:scroll={clearArray}
+/>
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Assembly</h1>
 {#if !trackingNumberOutbound}
@@ -148,9 +139,10 @@
 				id="uniqname"
 				name="uniqname"
 				tabindex="-1"
-				bind:value={uniqname}
+				value={data.user.username}
 				on:change={clearArray}
 				required
+				readonly
 			/>
 		</div>
 
@@ -158,26 +150,14 @@
 			<Label for="workstation" class="mb-2">
 				<div class="text-white">Workstation</div>
 			</Label>
-			{#if isWorkstation}
-				<Input
-					id="workstation"
-					name="workstation"
-					tabindex="-1"
-					bind:value={workstation}
-					class="mt-2"
-					readonly
-					required
-				/>
-			{:else}
-				<Input
-					id="workstation"
-					name="workstation"
-					tabindex="-1"
-					bind:value={workstation}
-					class="mt-2"
-					required
-				/>
-			{/if}
+			<Input
+				id="workstation"
+				name="workstation"
+				tabindex="-1"
+				bind:value={workstation}
+				class="mt-2"
+				required
+			/>
 		</div>
 
 		<div class="mb-6">

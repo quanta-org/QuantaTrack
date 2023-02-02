@@ -8,11 +8,9 @@
 	export let data: PageData;
 	export let form: HTMLFormElement;
 	var charArray: string[] = [];
-	let uniqname: string;
 	let workstation: string;
 	let carrier: string;
 	let trackingNumber: string;
-	let isWorkstation: boolean;
 	let routingLocations = [
 		{ value: 'NCRC-CONSULT', name: 'NCRC-CONSULT' },
 		{ value: 'Location 2', name: 'Location 2' },
@@ -33,7 +31,7 @@
 			charArray.push(event.key);
 		} else if (event.key == 'Tab' && charArray.length >= 10) {
 			event.preventDefault();
-			addScan(charArray.join(''))
+			addScan(charArray.join(''));
 		} else if (event.key == 'Unidentified') {
 			isScanning.set('true');
 		}
@@ -91,21 +89,14 @@
 	function clearArray() {
 		charArray = [];
 	}
-
-	onMount(() => {
-		if (data.user) {
-			if (data.user.auth === false) {
-				workstation = data.user.username;
-				isWorkstation = true;
-			} else {
-				uniqname = data.user.username;
-				isWorkstation = false;
-			}
-		}
-	});
 </script>
 
-<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray} />
+<svelte:window
+	on:keydown={onKeydown}
+	on:keyup={onKeyup}
+	on:mousemove={clearArray}
+	on:scroll={clearArray}
+/>
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Receipt</h1>
 {#if trackingNumber}
@@ -149,9 +140,9 @@
 				id="uniqname"
 				name="uniqname"
 				tabindex="-1"
-				bind:value={uniqname}
-				on:change={clearArray}
+				value={data.user.username}
 				required
+				readonly
 			/>
 		</div>
 
@@ -159,26 +150,14 @@
 			<Label for="workstation" class="mb-2">
 				<div class="text-white">Workstation</div>
 			</Label>
-			{#if isWorkstation}
-				<Input
-					id="workstation"
-					name="workstation"
-					tabindex="-1"
-					bind:value={workstation}
-					class="mt-2"
-					readonly
-					required
-				/>
-			{:else}
-				<Input
-					id="workstation"
-					name="workstation"
-					tabindex="-1"
-					bind:value={workstation}
-					class="mt-2"
-					required
-				/>
-			{/if}
+			<Input
+				id="workstation"
+				name="workstation"
+				tabindex="-1"
+				bind:value={workstation}
+				class="mt-2"
+				required
+			/>
 		</div>
 
 		<div class="mb-6">
