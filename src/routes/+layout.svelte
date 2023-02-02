@@ -81,6 +81,7 @@
 		<NavLi
 			href="/"
 			active={$page.url.pathname === '/'}
+			on:click={() => {!hidden && toggle()}} 
 			activeClass="text-white bg-blue-600 md:bg-transparent"
 			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Home</NavLi
@@ -95,23 +96,25 @@
 		>
 		<NavLi
 			href="#"
+			on:click={() => {!hidden && toggle()}} 
 			activeClass="text-white bg-blue-600 md:bg-transparent"
 			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Blocks & Slides</NavLi
 		>
 		<NavLi
 			href="#"
+			on:click={() => {!hidden && toggle()}} 
 			activeClass="text-white bg-blue-600 md:bg-transparent"
 			nonActiveClass="pl-0 md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Kits</NavLi
 		>
 
 		<Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
-			<DropdownItem href="/parcels/assembly">Assembly</DropdownItem>
-			<DropdownItem href="/parcels/receipt">Receipt</DropdownItem>
-			<DropdownItem href="/parcels/opening">Opening</DropdownItem>
+			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/assembly">Assembly</DropdownItem>
+			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/receipt">Receipt</DropdownItem>
+			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/opening">Opening</DropdownItem>
 			<DropdownDivider />
-			<DropdownItem href="/parcels/lookup">Lookup</DropdownItem>
+			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/lookup">Lookup</DropdownItem>
 		</Dropdown>
 	</NavUl>
 
