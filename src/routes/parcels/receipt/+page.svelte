@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Input, Label, Select, Button, Spinner } from 'flowbite-svelte';
-	import { toast } from '$lib/store';
+	import { toast, isScanning } from '$lib/store';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -28,52 +28,64 @@
 	];
 	let isLoading: boolean = false;
 
-	function onKeypress(event: KeyboardEvent) {
+	function onKeydown(event: KeyboardEvent) {
 		if (event.key.length == 1) {
 			charArray.push(event.key);
 		} else if (event.key == 'Tab' && charArray.length >= 10) {
 			event.preventDefault();
-			let tracknum = charArray.join('');
-			charArray = [];
-
-			if (trackingNumber === tracknum) {
-				form.requestSubmit();
-				return;
-			}
-
-			let ups_regex = ['^(1Z)[0-9A-Z]{16}$', '^(T)+[0-9A-Z]{10}$', '^[0-9]{9}$', '^[0-9]{26}$'];
-			let fedex_regex = ['^[0-9]{20}$', '^[0-9]{15}$', '^[0-9]{12}$', '^[0-9]{22}$'];
-			let usps_regex = [
-				'^(94|93|92|94|95)[0-9]{20}$',
-				'^(94|93|92|94|95)[0-9]{22}$',
-				'^(70|14|23|03)[0-9]{14}$',
-				'^(M0|82)[0-9]{8}$',
-				'^([A-Z]{2})[0-9]{9}([A-Z]{2})$'
-			];
-
-			//Detect UPS
-			ups_regex.forEach((value) => {
-				if (tracknum.match(value)) {
-					carrier = 'UPS';
-				}
-			});
-
-			//Detect FedEx
-			fedex_regex.forEach((value) => {
-				if (tracknum.match(value)) {
-					carrier = 'FedEx';
-				}
-			});
-
-			//Detect USPS
-			usps_regex.forEach((value) => {
-				if (tracknum.match(value)) {
-					carrier = 'USPS';
-				}
-			});
-
-			trackingNumber = tracknum;
+			addScan(charArray.join(''))
+		} else if (event.key == 'Unidentified') {
+			isScanning.set('true');
 		}
+	}
+
+	function onKeyup(event: KeyboardEvent) {
+		if (event.key == 'Unidentified' && $isScanning == 'true') {
+			isScanning.set('false');
+			addScan(charArray.join(''));
+		}
+	}
+
+	function addScan(input: string) {
+		charArray = [];
+
+		if (trackingNumber === input) {
+			form.requestSubmit();
+			return;
+		}
+
+		let ups_regex = ['^(1Z)[0-9A-Z]{16}$', '^(T)+[0-9A-Z]{10}$', '^[0-9]{9}$', '^[0-9]{26}$'];
+		let fedex_regex = ['^[0-9]{20}$', '^[0-9]{15}$', '^[0-9]{12}$', '^[0-9]{22}$'];
+		let usps_regex = [
+			'^(94|93|92|94|95)[0-9]{20}$',
+			'^(94|93|92|94|95)[0-9]{22}$',
+			'^(70|14|23|03)[0-9]{14}$',
+			'^(M0|82)[0-9]{8}$',
+			'^([A-Z]{2})[0-9]{9}([A-Z]{2})$'
+		];
+
+		//Detect UPS
+		ups_regex.forEach((value) => {
+			if (input.match(value)) {
+				carrier = 'UPS';
+			}
+		});
+
+		//Detect FedEx
+		fedex_regex.forEach((value) => {
+			if (input.match(value)) {
+				carrier = 'FedEx';
+			}
+		});
+
+		//Detect USPS
+		usps_regex.forEach((value) => {
+			if (input.match(value)) {
+				carrier = 'USPS';
+			}
+		});
+
+		trackingNumber = input;
 	}
 
 	function clearArray() {
@@ -93,7 +105,7 @@
 	});
 </script>
 
-<svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
+<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Receipt</h1>
 {#if trackingNumber}

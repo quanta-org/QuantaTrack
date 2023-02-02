@@ -27,14 +27,9 @@ export const GET = ( async ({ locals, url }) => {
 	let filter = url.searchParams.get('q') ?? '';
 
 	// Get data from db
-	let parcels: App.Parcel[];
-	let parcelCount: number;
-	try {
-		parcels = await getParcels(pageNumber, filter);
-		parcelCount = await getParcelCount(filter);
-	} catch (err) {
-		console.log(err);
-        return new Response(JSON.stringify({
+	let [parcelsResult, parcelCountResult] = await Promise.allSettled([getParcels(pageNumber, filter), getParcelCount(filter)]);
+	if(parcelsResult.status == "rejected" || parcelCountResult.status == "rejected") {
+		return new Response(JSON.stringify({
             parcels: '[]',
             parcelCount: 0,
             error: 'Could not connect to db!'
@@ -42,7 +37,7 @@ export const GET = ( async ({ locals, url }) => {
 	}
 
     return new Response(JSON.stringify({
-        parcels: parcels,
-        pageCount: Math.ceil(parcelCount / 50)
+        parcels: parcelsResult.value,
+        pageCount: Math.ceil(parcelCountResult.value / 50)
     }));
 }) satisfies RequestHandler;

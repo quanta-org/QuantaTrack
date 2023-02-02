@@ -16,9 +16,6 @@
 	let kitID: string[] = [''];
 	let isWorkstation: boolean;
 	let isLoading: boolean = false;
-	let scanning: boolean = false;
-
-	$: scanning ? isScanning.set("true") : isScanning.set("false");
 
 	function onKeydown(event: KeyboardEvent) {
 		// If key length is one, add to array
@@ -29,23 +26,23 @@
 		} else if (event.key == 'Tab' && charArray.length >= 10) {
 			event.preventDefault();
 			addScan(charArray.join(''));
-			charArray = [];
 
 			// If the key is unidentified, start scanning
 		} else if (event.key == 'Unidentified') {
-			scanning = true;
+			isScanning.set('true');
 		}
 	}
 
 	function onKeyup(event: KeyboardEvent) {
-		if (event.key == 'Unidentified' && isScanning) {
-			scanning = false;
+		if (event.key == 'Unidentified' && $isScanning == 'true') {
+			isScanning.set('false');
 			addScan(charArray.join(''));
-			charArray = [];
 		}
 	}
 
 	function addScan(input: string) {
+		charArray = [];
+
 		if (!trackingNumberOutbound) {
 			trackingNumberOutbound = input;
 			return;
@@ -65,10 +62,6 @@
 		}
 	}
 
-	function clearArray() {
-		charArray = [];
-	}
-
 	function addKit(index: number) {
 		if (trackingNumber.length <= index + 1) {
 			trackingNumber.push('');
@@ -78,7 +71,7 @@
 		}
 	}
 
-	function deleteParcel(index: number) {
+	function deleteKit(index: number) {
 		if (index == trackingNumber.length - 1) {
 			trackingNumber[index] = '';
 			kitID[index] = '';
@@ -88,6 +81,10 @@
 			trackingNumber = trackingNumber;
 			kitID = kitID;
 		}
+	}
+
+	function clearArray() {
+		charArray = [];
 	}
 
 	onMount(() => {
@@ -103,11 +100,7 @@
 	});
 </script>
 
-<svelte:window
-	on:keydown={onKeydown}
-	on:keyup={onKeyup}
-	on:mousemove={clearArray}
-/>
+<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray}  />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Assembly</h1>
 {#if !trackingNumberOutbound}
@@ -226,7 +219,7 @@
 						tabindex="-1"
 						class="text-white order-last cursor-pointer"
 						on:click={() => {
-							deleteParcel(index);
+							deleteKit(index);
 						}}
 					>
 						<svg

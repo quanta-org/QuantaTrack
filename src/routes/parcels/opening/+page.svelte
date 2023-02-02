@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
-	import { toast } from '$lib/store';
+	import { toast, isScanning } from '$lib/store';
 	import type { PageData, ActionData } from './$types';
 
 	export let form: HTMLFormElement;
@@ -16,21 +16,33 @@
 	let isWorkstation: boolean;
 	let isLoading: boolean = false;
 
-	function onKeypress(event: KeyboardEvent) {
+	function onKeydown(event: KeyboardEvent) {
 		if (event.key.length == 1) {
 			charArray.push(event.key);
 		} else if (event.key == 'Tab' && charArray.length >= 10) {
 			event.preventDefault();
-			let scanInput = charArray.join('');
-			charArray = [];
+			addScan(charArray.join(''));
+		} else if (event.key == 'Unidentified') {
+			isScanning.set('true');
+		}
+	}
 
-			if (trackingNumber == '') {
-				trackingNumber = scanInput;
-			} else if (TCDI == '') {
-				TCDI = scanInput;
-			} else if (kitID == '') {
-				kitID = scanInput;
-			}
+	function onKeyup(event: KeyboardEvent) {
+		if (event.key == 'Unidentified' && $isScanning == 'true') {
+			isScanning.set('false');
+			addScan(charArray.join(''));
+		}
+	}
+
+	function addScan(input: string) {
+		charArray = [];
+
+		if (trackingNumber == '') {
+			trackingNumber = input;
+		} else if (TCDI == '') {
+			TCDI = input;
+		} else if (kitID == '') {
+			kitID = input;
 		}
 	}
 
@@ -51,7 +63,7 @@
 	});
 </script>
 
-<svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
+<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Opening</h1>
 {#if trackingNumber == ''}

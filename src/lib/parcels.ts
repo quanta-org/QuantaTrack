@@ -1,12 +1,7 @@
 import oracledb from 'oracledb';
-import { env } from '$env/dynamic/private';
 
 export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening' | 'assembly') {
-	let connection = await oracledb.getConnection({
-		user: env.DBUSER,
-		password: env.DBUSERPASS,
-		connectionString: env.DB
-	});
+	let connection = await oracledb.getConnection();
 
 	if (table === 'receipt') {
 		let sql = `INSERT INTO ParcelReceipt (ACTION_TECH_EMAIL, WORKSTATION_CODE, CARRIER, TRACKING_INBOUND, PARCEL_ROUTING_CODE) VALUES (:1, :2, :3, :4, :5)`;
@@ -48,11 +43,7 @@ export async function addParcel(parcel: App.Parcel, table: 'receipt' | 'opening'
 
 export async function getParcel(trackingNumber: string, table: 'receipt' | 'opening' | 'assembly') {
 	let parcel: App.Parcel;
-	let connection = await oracledb.getConnection({
-		user: env.DBUSER,
-		password: env.DBUSERPASS,
-		connectionString: env.DB
-	});
+	let connection = await oracledb.getConnection();
 
 	let sqlSearch;
 	if (table === 'receipt') {
@@ -94,11 +85,7 @@ export async function getParcels(pageNumber: number = 1, filter: string = '') {
 	// Get data from db
 	let parcels: App.Parcel[] = [];
 
-	let connection = await oracledb.getConnection({
-		user: env.DBUSER,
-		password: env.DBUSERPASS,
-		connectionString: env.DB
-	});
+	let connection = await oracledb.getConnection();
 
 	let result;
 	let end = pageNumber * 50;
@@ -133,11 +120,7 @@ export async function getParcels(pageNumber: number = 1, filter: string = '') {
 
 export async function getParcelCount(filter: string | null = null) {
 	// Get data from db
-	let connection = await oracledb.getConnection({
-		user: env.DBUSER,
-		password: env.DBUSERPASS,
-		connectionString: env.DB
-	});
+	let connection = await oracledb.getConnection();
 
 	let result;
 	if (filter && filter != '') {

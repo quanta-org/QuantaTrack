@@ -1,6 +1,13 @@
 import type { Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import jsonwebtoken from 'jsonwebtoken';
+import oracledb from 'oracledb';
+
+await oracledb.createPool({
+    user: env.DBUSER,
+    password: env.DBUSERPASS,
+    connectionString: env.DB
+});
 
 export const handle = (async ({ event, resolve }) => {
 	const jwt = event.cookies.get('jwt');
