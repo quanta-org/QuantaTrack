@@ -1,62 +1,32 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
-	import { toast, isScanning } from '$lib/store';
-	import type { PageData, ActionData } from './$types';
+	import { toast } from '$lib/store';
+	import ScanCapture from '$lib/ScanCapture.svelte';
+	import type { PageData } from './$types';
 
 	export let form: HTMLFormElement;
 	export let data: PageData;
-	var charArray: string[] = [];
 	let workstation: string;
-	let trackingNumber: string;
-	let TCDI: string;
-	let kitID: string;
+	let trackingNumber: string = '';
+	let TCDI: string = '';
+	let kitID: string = '';
 	let isLoading: boolean = false;
+	let scanText: string | null = null;
 
-	function onKeydown(event: KeyboardEvent) {
-		if (event.key.length == 1) {
-			charArray.push(event.key);
-		} else if (event.key == 'Tab' && charArray.length >= 5) {
-			event.preventDefault();
-			addScan(charArray.join(''));
-		} else if (event.key == 'Unidentified') {
-			isScanning.set('true');
-		}
-	}
-
-	function onKeyup(event: KeyboardEvent) {
-		if (event.key == 'Unidentified' && $isScanning == 'true') {
-			isScanning.set('false');
-			if (charArray.length >= 5) {
-				addScan(charArray.join(''));
-			}
-		}
-	}
-
-	function addScan(input: string) {
-		charArray = [];
-
+	$: if (scanText) {
 		if (trackingNumber == '') {
-			trackingNumber = input;
+			trackingNumber = scanText;
 		} else if (TCDI == '') {
-			TCDI = input;
+			TCDI = scanText;
 		} else if (kitID == '') {
-			kitID = input;
+			kitID = scanText;
 		}
-	}
-
-	function clearArray() {
-		charArray = [];
+		scanText = null;
 	}
 </script>
 
-<svelte:window
-	on:keydown={onKeydown}
-	on:keyup={onKeyup}
-	on:mousemove={clearArray}
-	on:scroll={clearArray}
-/>
+<ScanCapture bind:text={scanText} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Opening</h1>
 {#if trackingNumber == ''}

@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
-	import { toast, isScanning } from '$lib/store';
+	import { toast } from '$lib/store';
+	import ScanCapture from '$lib/ScanCapture.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
 
-	var charArray: string[] = [];
 	let workstation: string;
 	let trackingNumberOutbound: string;
 	let client: string;
@@ -14,52 +13,27 @@
 	let trackingNumber: string[] = [''];
 	let kitID: string[] = [''];
 	let isLoading: boolean = false;
+	let scanText: string | null = null;
 
-	function onKeydown(event: KeyboardEvent) {
-		// If key length is one, add to array
-		if (event.key.length == 1) {
-			charArray.push(event.key);
-
-			// If the key is tab and the array is long, process scan
-		} else if (event.key == 'Tab' && charArray.length >= 5) {
-			event.preventDefault();
-			addScan(charArray.join(''));
-
-			// If the key is unidentified, start scanning
-		} else if (event.key == 'Unidentified') {
-			isScanning.set('true');
-		}
-	}
-
-	function onKeyup(event: KeyboardEvent) {
-		if (event.key == 'Unidentified' && $isScanning == 'true') {
-			isScanning.set('false');
-			if (charArray.length >= 5) {
-				addScan(charArray.join(''));
-			}
-		}
-	}
-
-	function addScan(input: string) {
-		charArray = [];
-
+	$: if (scanText) {
 		if (!trackingNumberOutbound) {
-			trackingNumberOutbound = input;
-			return;
-		}
-
-		for (let i = 0; i < trackingNumber.length; i++) {
-			if (trackingNumber[i] == '') {
-				trackingNumber[i] = input;
-				addKit(i);
-				break;
-			} else if (kitID[i] == '') {
-				kitID[i] = input;
-				break;
-			} else if (i + 1 == trackingNumber.length) {
-				addKit(i);
+			trackingNumberOutbound = scanText;
+		} else {
+			for (let i = 0; i < trackingNumber.length; i++) {
+				if (trackingNumber[i] == '') {
+					trackingNumber[i] = scanText;
+					addKit(i);
+					break;
+				} else if (kitID[i] == '') {
+					kitID[i] = scanText;
+					break;
+				} else if (i + 1 == trackingNumber.length) {
+					addKit(i);
+				}
 			}
 		}
+
+		scanText = null;
 	}
 
 	function addKit(index: number) {
@@ -82,18 +56,9 @@
 			kitID = kitID;
 		}
 	}
-
-	function clearArray() {
-		charArray = [];
-	}
 </script>
 
-<svelte:window
-	on:keydown={onKeydown}
-	on:keyup={onKeyup}
-	on:mousemove={clearArray}
-	on:scroll={clearArray}
-/>
+<ScanCapture bind:text={scanText} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Assembly</h1>
 {#if !trackingNumberOutbound}
@@ -142,7 +107,6 @@
 				name="uniqname"
 				tabindex="-1"
 				value={data.user.username}
-				on:change={clearArray}
 				required
 				readonly
 			/>

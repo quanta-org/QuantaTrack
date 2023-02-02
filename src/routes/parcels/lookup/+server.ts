@@ -1,5 +1,5 @@
 import { getParcels, getParcelCount } from '$lib/parcels';
-import { error, fail } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET = ( async ({ locals, url }) => {

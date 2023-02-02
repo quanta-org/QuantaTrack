@@ -1,38 +1,22 @@
 <script lang="ts">
 	import { Input, Label, Button } from 'flowbite-svelte';
 	import { enhance } from '$app/forms';
-	import { toast, isScanning } from '$lib/store';
+	import { toast } from '$lib/store';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
+	import ScanCapture from '$lib/ScanCapture.svelte';
 
 	export let data: PageData;
 	let uniqname: string;
-	let charArray: string[] = [];
+	let scanText: string | null;
 
-	async function onKeydown(event: KeyboardEvent) {
-		if (event.key.length == 1) {
-			charArray.push(event.key);
-		} else if (event.key == 'Tab' && charArray.length >= 5) {
-			event.preventDefault();
-			await login(charArray.join(''));
-		} else if (event.key == 'Unidentified') {
-			isScanning.set('true');
-		}
-	}
-
-	async function onKeyup(event: KeyboardEvent) {
-		if (event.key == 'Unidentified' && $isScanning == 'true') {
-			isScanning.set('false');
-			if (charArray.length >= 5) {
-				await login(charArray.join(''));
-			}
-		}
+	$: if (scanText) {
+		login(scanText);
+		scanText = null;
 	}
 
 	async function login(uniqname: string) {
-		charArray = [];
-
 		const data = new FormData();
 		data.append('uniqname', uniqname);
 		await fetch(`?/scanLogin`, { method: 'POST', body: data });
@@ -44,18 +28,9 @@
 			await goto('/');
 		}
 	}
-
-	function clearArray() {
-		charArray = [];
-	}
 </script>
 
-<svelte:window
-	on:keydown={onKeydown}
-	on:keyup={onKeyup}
-	on:mousemove={clearArray}
-	on:scroll={clearArray}
-/>
+<ScanCapture bind:text={scanText} />
 
 <div class="flex justify-center">
 	<div class="flex mb-4 bg-gray-200 p-10 rounded gap-10 justify-center">
