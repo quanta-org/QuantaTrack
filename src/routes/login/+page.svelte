@@ -13,9 +13,9 @@
 	async function onKeydown(event: KeyboardEvent) {
 		if (event.key.length == 1) {
 			charArray.push(event.key);
-		} else if (event.key == 'Tab' && charArray.length >= 10) {
+		} else if (event.key == 'Tab' && charArray.length >= 5) {
 			event.preventDefault();
-			await login(charArray.join(''))
+			await login(charArray.join(''));
 		} else if (event.key == 'Unidentified') {
 			isScanning.set('true');
 		}
@@ -24,7 +24,9 @@
 	async function onKeyup(event: KeyboardEvent) {
 		if (event.key == 'Unidentified' && $isScanning == 'true') {
 			isScanning.set('false');
-			await login(charArray.join(''));
+			if (charArray.length >= 5) {
+				await login(charArray.join(''));
+			}
 		}
 	}
 
@@ -48,7 +50,12 @@
 	}
 </script>
 
-<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray} />
+<svelte:window
+	on:keydown={onKeydown}
+	on:keyup={onKeyup}
+	on:mousemove={clearArray}
+	on:scroll={clearArray}
+/>
 
 <div class="flex justify-center">
 	<div class="flex mb-4 bg-gray-200 p-10 rounded gap-10 justify-center">

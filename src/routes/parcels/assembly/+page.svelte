@@ -21,7 +21,7 @@
 			charArray.push(event.key);
 
 			// If the key is tab and the array is long, process scan
-		} else if (event.key == 'Tab' && charArray.length >= 10) {
+		} else if (event.key == 'Tab' && charArray.length >= 5) {
 			event.preventDefault();
 			addScan(charArray.join(''));
 
@@ -34,7 +34,9 @@
 	function onKeyup(event: KeyboardEvent) {
 		if (event.key == 'Unidentified' && $isScanning == 'true') {
 			isScanning.set('false');
-			addScan(charArray.join(''));
+			if (charArray.length >= 5) {
+				addScan(charArray.join(''));
+			}
 		}
 	}
 

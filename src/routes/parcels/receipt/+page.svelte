@@ -29,7 +29,7 @@
 	function onKeydown(event: KeyboardEvent) {
 		if (event.key.length == 1) {
 			charArray.push(event.key);
-		} else if (event.key == 'Tab' && charArray.length >= 10) {
+		} else if (event.key == 'Tab' && charArray.length >= 5) {
 			event.preventDefault();
 			addScan(charArray.join(''));
 		} else if (event.key == 'Unidentified') {
@@ -40,7 +40,9 @@
 	function onKeyup(event: KeyboardEvent) {
 		if (event.key == 'Unidentified' && $isScanning == 'true') {
 			isScanning.set('false');
-			addScan(charArray.join(''));
+			if (charArray.length >= 5) {
+				addScan(charArray.join(''));
+			}
 		}
 	}
 
