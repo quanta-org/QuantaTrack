@@ -170,7 +170,11 @@
 	</Toast>
 </div>
 
-<div class="bg-gray-900 min-h-screen w-full bg-plus {scanning ? "border-0 shadow-green-500 shadow-[inset_0px_0px_70px_rgba(0,255,9,1)]" : ""}">
+{#if scanning}
+	<div class="absolute h-full w-screen border-0 shadow-green-500 shadow-[inset_0px_0px_70px_rgba(0,255,9,1)] pointer-events-none" />
+{/if}
+
+<div class="bg-gray-900 min-h-screen w-full bg-plus">
 	<div class="mx-auto pt-10 h-full">
 		<slot />
 	</div>

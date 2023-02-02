@@ -66,7 +66,7 @@
 	</div>
 </div>
 
-<div class="flex justify-center m-10 mb-20">
+<div class="flex justify-center mt-10 pb-10">
 	{#if !data.user}
 		<form
 			method="POST"
