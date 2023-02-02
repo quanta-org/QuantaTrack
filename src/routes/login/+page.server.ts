@@ -12,7 +12,7 @@ export const load = (async ({ locals }) => {
 export const actions: Actions = {
 	login: async (event: RequestEvent) => {
 		const data = await event.request.formData();
-		const username = data.get('username');
+		const uniqname = data.get('uniqname');
 		const password = data.get('password');
 		const redirectUrl = data.get('redirect');
 
@@ -21,7 +21,7 @@ export const actions: Actions = {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: '{"uniqname":"' + username + '","password":"' + password + '"}'
+			body: '{"uniqname":"' + uniqname + '","password":"' + password + '"}'
 		});
 
 		if ((await userdata.text()) === 'no') {
@@ -29,13 +29,13 @@ export const actions: Actions = {
 		}
 
 		var token = jsonwebtoken.sign(
-			{ username: username, auth: true },
+			{ username: uniqname, auth: true },
 			env.JWTSECRETKEY ?? 'shhsecret',
 			{ expiresIn: '8h' }
 		);
 
 		event.cookies.set('jwt', token, { path: '/', secure: false });
-		console.log('User ' + username + ' logged in.');
+		console.log('User ' + uniqname + ' logged in.');
 
 		if (redirectUrl && redirectUrl !== 'null') {
 			throw redirect(302, redirectUrl as string);
@@ -44,18 +44,18 @@ export const actions: Actions = {
 		throw redirect(302, '/');
 	},
 
-	stationlogin: async (event: RequestEvent) => {
+	scanLogin: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 
-		const stationid = data.get('stationid');
+		const uniqname = data.get('uniqname');
 		var token = jsonwebtoken.sign(
-			{ username: stationid, auth: false },
+			{ username: uniqname, auth: false },
 			env.JWTSECRETKEY ?? 'shhsecret',
 			{ expiresIn: '8h' }
 		);
 
-		event.cookies.set('jwt', token);
-		console.log('Station ' + stationid + ' logged in.');
+		event.cookies.set('jwt', token, { path: '/', secure: false });
+		console.log('Scan login ' + uniqname + ' logged in.');
 	},
 
 	logout: async (event: RequestEvent) => {

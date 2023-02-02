@@ -1,36 +1,45 @@
 <script lang="ts">
 	import { Input, Label, Button } from 'flowbite-svelte';
 	import { enhance } from '$app/forms';
-	import { toast } from '$lib/store';
+	import { toast, isScanning } from '$lib/store';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
-	import { onMount } from 'svelte';
 
 	export let data: PageData;
-	let username: string;
+	let uniqname: string;
 	let charArray: string[] = [];
-	let stationid: string = '';
 
-	async function onKeypress(event: KeyboardEvent) {
+	async function onKeydown(event: KeyboardEvent) {
 		if (event.key.length == 1) {
 			charArray.push(event.key);
 		} else if (event.key == 'Tab' && charArray.length >= 10) {
 			event.preventDefault();
-			stationid = charArray.join('');
-			const data = new FormData();
-			data.append('stationid', stationid);
-			charArray = [];
+			await login(charArray.join(''))
+		} else if (event.key == 'Unidentified') {
+			isScanning.set('true');
+		}
+	}
 
-			await fetch(`?/stationlogin`, { method: 'POST', body: data });
+	async function onKeyup(event: KeyboardEvent) {
+		if (event.key == 'Unidentified' && $isScanning == 'true') {
+			isScanning.set('false');
+			await login(charArray.join(''));
+		}
+	}
 
-			await invalidateAll();
+	async function login(uniqname: string) {
+		charArray = [];
 
-			if ($page.url.searchParams.has('redirect')) {
-				await goto($page.url.searchParams.get('redirect') as string);
-			} else {
-				await goto('/');
-			}
+		const data = new FormData();
+		data.append('uniqname', uniqname);
+		await fetch(`?/scanLogin`, { method: 'POST', body: data });
+		await invalidateAll();
+
+		if ($page.url.searchParams.has('redirect')) {
+			await goto($page.url.searchParams.get('redirect') as string);
+		} else {
+			await goto('/');
 		}
 	}
 
@@ -39,7 +48,7 @@
 	}
 </script>
 
-<svelte:window on:keydown={onKeypress} on:mousemove={clearArray} />
+<svelte:window on:keydown={onKeydown} on:keyup={onKeyup} on:mousemove={clearArray} on:scroll={clearArray} />
 
 <div class="flex justify-center">
 	<div class="flex mb-4 bg-gray-200 p-10 rounded gap-10 justify-center">
@@ -70,15 +79,20 @@
 		>
 			<div class="flex justify-center m-2">
 				<img class="invert" src="/scan.svg" alt="Barcode scan" width="100" height="100" />
-				<h2 class="text-white font-bold text-2xl ml-5 self-center">Scan Station Code</h2>
+				<h2 class="text-white font-bold text-2xl ml-5 self-center">Scan Badge</h2>
 			</div>
 
 			<h2 class="text-white text-xl text-center">or</h2>
 
-			<input name="redirect" class="hidden" type="hidden" value={$page.url.searchParams.get('redirect')}>
+			<input
+				name="redirect"
+				class="hidden"
+				type="hidden"
+				value={$page.url.searchParams.get('redirect')}
+			/>
 			<Label class="mb-2">
-				<div class="text-white">User Name:</div>
-				<Input name="username" type="text" bind:value={username} required color={undefined} />
+				<div class="text-white">Uniqname:</div>
+				<Input name="uniqname" type="text" bind:value={uniqname} required color={undefined} />
 			</Label>
 			<Label class="mb-2">
 				<div class="text-white">Password:</div>
@@ -108,9 +122,9 @@
 		>
 			{#if $page.url.searchParams.get('err') == 'unauthorized'}
 				<h2 class="text-white text-xl self-center">
-					Logged in as station: <b>{data.user.username}</b>
+					Logged in as user: <b>{data.user.username}</b>
 				</h2>
-				<h3 class="text-white text-xl self-center">Log in as user to access.</h3>
+				<h3 class="text-white text-xl self-center">Log in with password to access.</h3>
 			{:else}
 				<h2 class="text-white text-xl self-center">
 					Logged in as user: <b>{data.user.username}</b>
