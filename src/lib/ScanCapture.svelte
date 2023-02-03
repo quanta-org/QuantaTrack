@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { isScanning } from '$lib/store';
-    export let text: string | null = null;
-    let charArray: string[] = [];
+	export let text: string | null = null;
+	let charArray: string[] = [];
 
-    async function onKeydown(event: KeyboardEvent) {
+	async function onKeydown(event: KeyboardEvent) {
 		if (event.key.length == 1) {
+			setTimeout(clearArray, 500);
 			charArray.push(event.key);
 		} else if (event.key == 'Tab' && charArray.length >= 5) {
 			event.preventDefault();
@@ -36,4 +37,5 @@
 	on:keyup={onKeyup}
 	on:mousemove={clearArray}
 	on:scroll={clearArray}
+	on:click={clearArray}
 />

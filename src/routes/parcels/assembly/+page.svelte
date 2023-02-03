@@ -106,7 +106,6 @@
 				type="text"
 				id="uniqname"
 				name="uniqname"
-				tabindex="-1"
 				value={data.user.username}
 				required
 				readonly
@@ -120,7 +119,6 @@
 			<Input
 				id="workstation"
 				name="workstation"
-				tabindex="-1"
 				bind:value={workstation}
 				class="mt-2"
 				required
@@ -131,14 +129,14 @@
 			<Label for="client" class="mb-2">
 				<div class="text-white">Clinic Code</div>
 			</Label>
-			<Input type="text" id="client" name="client" tabindex="-1" bind:value={client} required />
+			<Input type="text" id="client" name="client" bind:value={client} required />
 		</div>
 
 		<div class="mb-6">
 			<Label for="kitType" class="mb-2">
 				<div class="text-white">Kit Type</div>
 			</Label>
-			<Input type="text" id="kitType" name="kitType" tabindex="-1" bind:value={kitType} required />
+			<Input type="text" id="kitType" name="kitType" bind:value={kitType} required />
 		</div>
 
 		<div class="mb-6">
@@ -149,7 +147,6 @@
 				type="text"
 				id="trackingNumberOutbound"
 				name="trackingNumberOutbound"
-				tabindex="-1"
 				bind:value={trackingNumberOutbound}
 				required
 			/>
@@ -163,7 +160,6 @@
 					</Label>
 					<button
 						type="button"
-						tabindex="-1"
 						class="text-white order-last cursor-pointer"
 						on:click={() => {
 							deleteKit(index);
@@ -185,7 +181,6 @@
 					type="text"
 					id="trackingNumber{index}"
 					name="trackingNumber"
-					tabindex="-1"
 					bind:value={trackingNumber[index]}
 					placeholder="Tracking number"
 					on:input={() => {
@@ -196,7 +191,6 @@
 					type="text"
 					id="kitID{index}"
 					name="kitID"
-					tabindex="-1"
 					bind:value={kitID[index]}
 					placeholder="Kit ID"
 					defaultClass="block mt-1 w-full"
@@ -210,7 +204,7 @@
 					<Spinner class="mr-3" size="4" color="white" /> Submitting ...
 				</Button>
 			{:else}
-				<Button type="submit" tabindex="-1">Add</Button>
+				<Button type="submit">Add</Button>
 			{/if}
 		</div>
 	</form>

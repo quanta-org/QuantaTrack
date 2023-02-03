@@ -74,7 +74,7 @@
 {#if trackingNumber}
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan again to add</h2>
 {:else}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan parcel or add tracking number</h2>
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan parcel</h2>
 {/if}
 
 <div class="flex justify-center pb-10">
@@ -111,7 +111,6 @@
 				type="text"
 				id="uniqname"
 				name="uniqname"
-				tabindex="-1"
 				value={data.user.username}
 				required
 				readonly
@@ -125,7 +124,6 @@
 			<Input
 				id="workstation"
 				name="workstation"
-				tabindex="-1"
 				bind:value={workstation}
 				class="mt-2"
 				required
@@ -139,7 +137,6 @@
 			<Select
 				id="carrier"
 				name="carrier"
-				tabindex="-1"
 				items={couriers}
 				bind:value={carrier}
 				class="mb-2"
@@ -154,7 +151,6 @@
 			<Select
 				id="routeLocation"
 				name="routeLocation"
-				tabindex="-1"
 				items={routingLocations}
 				value=""
 				class="mb-2"
@@ -170,7 +166,6 @@
 				type="text"
 				id="trackingNumber"
 				name="trackingNumber"
-				tabindex="-1"
 				bind:value={trackingNumber}
 				placeholder="1Z 6F8..."
 				required
@@ -183,7 +178,7 @@
 					<Spinner class="mr-3" size="4" color="white" /> Submitting ...
 				</Button>
 			{:else}
-				<Button type="submit" tabindex="-1">Add</Button>
+				<Button type="submit">Add</Button>
 			{/if}
 		</div>
 	</form>

@@ -73,7 +73,6 @@
 				type="text"
 				id="uniqname"
 				name="uniqname"
-				tabindex="-1"
 				value={data.user.username}
 				required
 				readonly
@@ -87,7 +86,6 @@
 			<Input
 				id="workstation"
 				name="workstation"
-				tabindex="-1"
 				bind:value={workstation}
 				class="mt-2"
 				required
@@ -102,7 +100,6 @@
 				type="text"
 				id="trackingNumber"
 				name="trackingNumber"
-				tabindex="-1"
 				bind:value={trackingNumber}
 				placeholder="1Z 6F8..."
 				required
@@ -117,7 +114,6 @@
 				type="text"
 				id="TCDI"
 				name="TCDI"
-				tabindex="-1"
 				bind:value={TCDI}
 				placeholder="TR..."
 				required
@@ -132,7 +128,6 @@
 				type="text"
 				id="kitID"
 				name="kitID"
-				tabindex="-1"
 				bind:value={kitID}
 				placeholder="K202..."
 			/>
@@ -144,7 +139,7 @@
 					<Spinner class="mr-3" size="4" color="white" /> Submitting ...
 				</Button>
 			{:else}
-				<Button type="submit" tabindex="-1">Add</Button>
+				<Button type="submit">Add</Button>
 			{/if}
 		</div>
 	</form>
