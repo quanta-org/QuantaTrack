@@ -39,7 +39,7 @@
 	<h2 class="text-2xl text-white mb-5 flex justify-center">Ready to submit!</h2>
 {/if}
 
-<div class="flex justify-center">
+<div class="flex justify-center pb-10">
 	<form
 		id="form"
 		method="POST"

@@ -43,6 +43,7 @@
 			trackingNumber = trackingNumber;
 			kitID = kitID;
 		}
+		window.scrollTo(0, document.body.scrollHeight);
 	}
 
 	function deleteKit(index: number) {
