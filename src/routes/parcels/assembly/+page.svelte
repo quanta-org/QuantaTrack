@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Input, Label, Button, Spinner, Select } from 'flowbite-svelte';
-	import { toast } from '$lib/store';
+	import { Input, Label, Button, Spinner, Select, CloseButton } from 'flowbite-svelte';
 	import ScanCapture from '$lib/ScanCapture.svelte';
+	import Toaster from '$lib/Toaster.svelte';
 	import type { PageData } from './$types';
-	export let data: PageData;
 
+	export let data: PageData;
 	let trackingNumberOutbound: string;
 	let client: string;
 	let kitType: string;
@@ -14,6 +14,8 @@
 	let isLoading: boolean = false;
 	let scanText: string | null = null;
 	let locations = data.locations;
+	let toastMessage: string;
+	let toastSuccess: boolean;
 
 	$: if (scanText) {
 		if (!trackingNumberOutbound) {
@@ -59,6 +61,7 @@
 	}
 </script>
 
+<Toaster bind:toastMessage bind:toastSuccess />
 <ScanCapture bind:text={scanText} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Assembly</h1>
@@ -82,15 +85,13 @@
 			isLoading = true;
 			return async ({ result, update }) => {
 				if (result.type == 'success') {
-					toast.set(
-						JSON.stringify({ message: 'Sucessfully added parcel!', success: 'true', show: 'true' })
-					);
+					toastSuccess = true;
+					toastMessage = 'Sucessfully added parcel!';
 					trackingNumber = [''];
 					kitID = [''];
 				} else if (result.type == 'failure') {
-					toast.set(
-						JSON.stringify({ message: result.data?.message, success: 'false', show: 'true' })
-					);
+					toastSuccess = false;
+					toastMessage = result.data?.message;
 				}
 
 				isLoading = false;
@@ -123,14 +124,35 @@
 			<Label for="client" class="mb-2">
 				<div class="text-white">Clinic Code</div>
 			</Label>
-			<Input type="text" id="client" name="client" bind:value={client} required />
+			<Input type="text" id="client" name="client" placeholder="MIMD" bind:value={client} required>
+				<CloseButton
+					slot="right"
+					on:click={() => {
+						client = '';
+					}}
+				/>
+			</Input>
 		</div>
 
 		<div class="mb-6">
 			<Label for="kitType" class="mb-2">
 				<div class="text-white">Kit Type</div>
 			</Label>
-			<Input type="text" id="kitType" name="kitType" bind:value={kitType} required />
+			<Input
+				type="text"
+				id="kitType"
+				name="kitType"
+				placeholder="Biopsy"
+				bind:value={kitType}
+				required
+			>
+				<CloseButton
+					slot="right"
+					on:click={() => {
+						kitType = '';
+					}}
+				/>
+			</Input>
 		</div>
 
 		<div class="mb-6">
@@ -142,8 +164,16 @@
 				id="trackingNumberOutbound"
 				name="trackingNumberOutbound"
 				bind:value={trackingNumberOutbound}
+				placeholder="1Z 6F8..."
 				required
-			/>
+			>
+				<CloseButton
+					slot="right"
+					on:click={() => {
+						trackingNumberOutbound = '';
+					}}
+				/>
+			</Input>
 		</div>
 
 		{#each trackingNumber as track, index}
@@ -152,24 +182,12 @@
 					<Label for="trackingNumber{index}" class="mb-2">
 						<div class="text-white">Kit {index + 1}</div>
 					</Label>
-					<button
-						type="button"
-						class="text-white order-last cursor-pointer"
+					<CloseButton
+						class="text-white"
 						on:click={() => {
 							deleteKit(index);
 						}}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="w-6 h-6"
-						>
-							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-						</svg>
-					</button>
+					/>
 				</div>
 				<Input
 					type="text"

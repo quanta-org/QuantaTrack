@@ -13,8 +13,8 @@
 		ListPlaceholder
 	} from 'flowbite-svelte';
 	import { browser } from '$app/environment';
-	import { toast } from '$lib/store';
 	import { goto } from '$app/navigation';
+	import Toaster from '$lib/Toaster.svelte';
 	import type { Parcel } from '$lib/types';
 
 	let pageCount: number = 0;
@@ -23,6 +23,7 @@
 	$: activePageNumber = $page.url.searchParams.get('page') ?? '1';
 	$: parcels = getParcels(filter, activePageNumber);
 	let pages: { name: number; href: string; active: boolean }[] = [];
+	let toastMessage: string;
 
 	// Set pages to the correct # of pages
 	$: if (browser && pageCount) {
@@ -68,7 +69,7 @@
 		const parcelData = await (await fetch(turl)).json();
 
 		if (parcelData.error) {
-			toast.set(JSON.stringify({ message: parcelData.error, success: 'false', show: 'true' }));
+			toastMessage = parcelData.error;
 		}
 
 		/* This was in onMount, not sure why, shouldn't be necessary
@@ -86,6 +87,8 @@
 		return parcelData.parcels;
 	}
 </script>
+
+<Toaster bind:toastMessage={toastMessage} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Lookup</h1>
 

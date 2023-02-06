@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { Input, Label, Button } from 'flowbite-svelte';
+	import { Input, Label, Button, Select } from 'flowbite-svelte';
 	import { enhance } from '$app/forms';
-	import { toast } from '$lib/store';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import ScanCapture from '$lib/ScanCapture.svelte';
+	import Toaster from '$lib/Toaster.svelte';
 
 	export let data: PageData;
 	let uniqname: string;
 	let scanText: string | null;
+	let toastMessage: string;
 
 	$: if (scanText) {
 		login(scanText);
@@ -30,6 +31,7 @@
 	}
 </script>
 
+<Toaster bind:toastMessage={toastMessage} />
 <ScanCapture bind:text={scanText} />
 
 <div class="flex justify-center">
@@ -50,9 +52,7 @@
 			use:enhance={({}) => {
 				return async ({ result, update }) => {
 					if (result.type == 'failure') {
-						toast.set(
-							JSON.stringify({ message: result.data?.message, success: 'false', show: 'true' })
-						);
+						toastMessage = result.data?.message;
 					}
 
 					update();
@@ -93,9 +93,7 @@
 			use:enhance={({}) => {
 				return async ({ result, update }) => {
 					if (result.type == 'failure') {
-						toast.set(
-							JSON.stringify({ message: result.data?.message, success: 'false', show: 'true' })
-						);
+						toastMessage = result.data?.message;
 					}
 
 					update();

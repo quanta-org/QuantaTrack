@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Input, Label, Button, Spinner, Select } from 'flowbite-svelte';
-	import { toast } from '$lib/store';
+	import { Input, Label, Button, Spinner, Select, CloseButton } from 'flowbite-svelte';
 	import ScanCapture from '$lib/ScanCapture.svelte';
+	import Toaster from '$lib/Toaster.svelte';
 	import type { PageData } from './$types';
 
 	export let form: HTMLFormElement;
@@ -13,6 +13,8 @@
 	let isLoading: boolean = false;
 	let scanText: string | null = null;
 	let locations = data.locations;
+	let toastSuccess: boolean;
+	let toastMessage: string;
 
 	$: if (scanText) {
 		if (trackingNumber == '') {
@@ -26,6 +28,7 @@
 	}
 </script>
 
+<Toaster bind:toastMessage bind:toastSuccess />
 <ScanCapture bind:text={scanText} />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Opening</h1>
@@ -50,14 +53,12 @@
 			isLoading = true;
 			return async ({ result, update }) => {
 				if (result.type == 'success') {
-					toast.set(
-						JSON.stringify({ message: 'Sucessfully added parcel!', success: 'true', show: 'true' })
-					);
+					toastSuccess = true;
+					toastMessage = 'Sucessfully added parcel!';
 					trackingNumber = '';
 				} else if (result.type == 'failure') {
-					toast.set(
-						JSON.stringify({ message: result.data?.message, success: 'false', show: 'true' })
-					);
+					toastSuccess = false;
+					toastMessage = result.data?.message;
 				}
 
 				isLoading = false;
@@ -97,34 +98,42 @@
 				bind:value={trackingNumber}
 				placeholder="1Z 6F8..."
 				required
-			/>
+			>
+				<CloseButton
+					slot="right"
+					on:click={() => {
+						trackingNumber = '';
+					}}
+				/>
+			</Input>
 		</div>
 
 		<div class="mb-6">
 			<Label for="TCDI" class="mb-2">
 				<div class="text-white">Tray #</div>
 			</Label>
-			<Input
-				type="text"
-				id="TCDI"
-				name="TCDI"
-				bind:value={TCDI}
-				placeholder="TR..."
-				required
-			/>
+			<Input type="text" id="TCDI" name="TCDI" bind:value={TCDI} placeholder="TR..." required>
+				<CloseButton
+					slot="right"
+					on:click={() => {
+						TCDI = '';
+					}}
+				/>
+			</Input>
 		</div>
 
 		<div class="mb-6">
 			<Label for="kitID" class="mb-2">
 				<div class="text-white">Kit #</div>
 			</Label>
-			<Input
-				type="text"
-				id="kitID"
-				name="kitID"
-				bind:value={kitID}
-				placeholder="K202..."
-			/>
+			<Input type="text" id="kitID" name="kitID" bind:value={kitID} placeholder="K202...">
+				<CloseButton
+					slot="right"
+					on:click={() => {
+						kitID = '';
+					}}
+				/>
+			</Input>
 		</div>
 
 		<div class="flex justify-center">

@@ -1,10 +1,8 @@
 export interface Parcel {
     uniqname: string,
     workstation: string,
-    carrier?: string,
     trackingNumber: string,
     date?: string,
-    kitID?: string,
     status?: string,
     
     // Optional sending data
@@ -13,9 +11,11 @@ export interface Parcel {
     kitBarcode?: string,
     trackingNumberOutbound?: string,
     clinicCode?: string,
+    kitID?: string,
 
     // Optional receiving data
     routingLocation?: string,
+    carrier?: string,
 
     // Optional opening data
     TCDI?: string,

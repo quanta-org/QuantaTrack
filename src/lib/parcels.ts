@@ -101,7 +101,7 @@ export async function getParcels(pageNumber: number = 1, filter: string = '') {
 		result = await connection.execute(sql, [start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 	}
 
-	result.rows?.map((item: any) => {
+	result.rows?.reverse().forEach((item: any) => {
 		parcels.push({
 			status: item.ACTION_DATE_2 ? "Opened" : item.ACTION_DATE_1 ? "Received" : "Assembled",
 			uniqname: item.ACTION_TECH_EMAIL ?? item.ACTION_TECH_EMAIL_1 ?? item.ACTION_TECH_EMAIL_2,
