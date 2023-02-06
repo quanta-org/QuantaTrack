@@ -6,7 +6,7 @@
 
 <div class="m-10">
 	<h2 class="text-3xl text-white text-center mb-2">Parcels</h2>
-	<div class="flex justify-center gap-1 flex-wrap">
+	<div class="flex justify-center gap-1 flex-wrap flex-col md:flex-row">
 		<Button size="lg" href="/parcels/assembly">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
