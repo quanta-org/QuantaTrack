@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Input, Label, Button, Spinner } from 'flowbite-svelte';
+	import { Input, Label, Button, Spinner, Select } from 'flowbite-svelte';
 	import { toast } from '$lib/store';
 	import ScanCapture from '$lib/ScanCapture.svelte';
 	import type { PageData } from './$types';
 
 	export let form: HTMLFormElement;
 	export let data: PageData;
-	let workstation: string;
 	let trackingNumber: string = '';
 	let TCDI: string = '';
 	let kitID: string = '';
 	let isLoading: boolean = false;
 	let scanText: string | null = null;
+	let locations = data.locations;
 
 	$: if (scanText) {
 		if (trackingNumber == '') {
@@ -80,21 +80,15 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="workstation" class="mb-2">
-				<div class="text-white">Workstation</div>
+			<Label for="location" class="mb-2">
+				<div class="text-white">Location</div>
 			</Label>
-			<Input
-				id="workstation"
-				name="workstation"
-				bind:value={workstation}
-				class="mt-2"
-				required
-			/>
+			<Select id="location" name="location" items={locations} value="" class="mb-2" required />
 		</div>
 
 		<div class="mb-6">
 			<Label for="trackingNumber" class="mb-2">
-				<div class="text-white">Tracking Number</div>
+				<div class="text-white">Tracking #</div>
 			</Label>
 			<Input
 				type="text"
@@ -108,7 +102,7 @@
 
 		<div class="mb-6">
 			<Label for="TCDI" class="mb-2">
-				<div class="text-white">TCDI</div>
+				<div class="text-white">Tray #</div>
 			</Label>
 			<Input
 				type="text"
@@ -122,7 +116,7 @@
 
 		<div class="mb-6">
 			<Label for="kitID" class="mb-2">
-				<div class="text-white">Kit ID</div>
+				<div class="text-white">Kit #</div>
 			</Label>
 			<Input
 				type="text"

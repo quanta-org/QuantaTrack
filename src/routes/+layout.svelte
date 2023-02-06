@@ -52,16 +52,18 @@
 	});
 
 	isScanning.subscribe((scanner) => {
-		if(scanner === 'true') {
+		if (scanner === 'true') {
 			scanning = true;
 		} else {
 			scanning = false;
 		}
-	})
+	});
 </script>
 
 {#if scanning}
-	<div class="fixed h-screen w-screen border-0 shadow-green-500 shadow-[inset_0px_0px_70px_rgba(0,255,9,1)] pointer-events-none" />
+	<div
+		class="fixed h-screen w-screen border-0 shadow-green-500 shadow-[inset_0px_0px_70px_rgba(0,255,9,1)] pointer-events-none"
+	/>
 {/if}
 
 <Navbar
@@ -81,7 +83,9 @@
 		<NavLi
 			href="/"
 			active={$page.url.pathname === '/'}
-			on:click={() => {!hidden && toggle()}} 
+			on:click={() => {
+				!hidden && toggle();
+			}}
 			activeClass="text-white bg-blue-600 md:bg-transparent"
 			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Home</NavLi
@@ -96,25 +100,49 @@
 		>
 		<NavLi
 			href="#"
-			on:click={() => {!hidden && toggle()}} 
+			on:click={() => {
+				!hidden && toggle();
+			}}
 			activeClass="text-white bg-blue-600 md:bg-transparent"
 			nonActiveClass="md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Blocks & Slides</NavLi
 		>
 		<NavLi
 			href="#"
-			on:click={() => {!hidden && toggle()}} 
+			on:click={() => {
+				!hidden && toggle();
+			}}
 			activeClass="text-white bg-blue-600 md:bg-transparent"
 			nonActiveClass="pl-0 md:border-0 text-gray-400 md:hover:text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
 			>Kits</NavLi
 		>
 
 		<Dropdown triggeredBy="#nav-menu1" class="w-44 z-20">
-			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/assembly">Assembly</DropdownItem>
-			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/receipt">Receipt</DropdownItem>
-			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/opening">Opening</DropdownItem>
+			<DropdownItem
+				on:click={() => {
+					!hidden && toggle();
+				}}
+				href="/parcels/assembly">Assembly</DropdownItem
+			>
+			<DropdownItem
+				on:click={() => {
+					!hidden && toggle();
+				}}
+				href="/parcels/receipt">Receipt</DropdownItem
+			>
+			<DropdownItem
+				on:click={() => {
+					!hidden && toggle();
+				}}
+				href="/parcels/opening">Opening</DropdownItem
+			>
 			<DropdownDivider />
-			<DropdownItem on:click={() => {!hidden && toggle()}} href="/parcels/lookup">Lookup</DropdownItem>
+			<DropdownItem
+				on:click={() => {
+					!hidden && toggle();
+				}}
+				href="/parcels/lookup">Lookup</DropdownItem
+			>
 		</Dropdown>
 	</NavUl>
 
@@ -128,10 +156,20 @@
 				><Chevron aligned><b>{data.user.username}</b></Chevron></NavLi
 			>
 			<Dropdown triggeredBy="#nav-menu2" class="w-44 z-20">
-				<DropdownItem on:click={logout}>Logout</DropdownItem>
+				<DropdownItem
+					on:click={() => {
+						logout();
+						!hidden && toggle();
+					}}>Logout</DropdownItem
+				>
 			</Dropdown>
 		{:else}
-			<Button href="/login">Login</Button>
+			<Button
+				on:click={() => {
+					!hidden && toggle();
+				}}
+				href="/login">Login</Button
+			>
 		{/if}
 	</NavUl>
 </Navbar>

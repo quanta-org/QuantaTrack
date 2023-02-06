@@ -15,6 +15,7 @@
 	import { browser } from '$app/environment';
 	import { toast } from '$lib/store';
 	import { goto } from '$app/navigation';
+	import type { Parcel } from '$lib/types';
 
 	let pageCount: number = 0;
 	let filter: string = $page.url.searchParams.get('q') ?? '';
@@ -60,7 +61,7 @@
 		}
 	};
 
-	async function getParcels(filter: string, page: string) {
+	async function getParcels(filter: string, page: string): Promise<Parcel[]> {
 		let turl = new URL($page.url);
 		turl.searchParams.set('q', filter);
 		turl.searchParams.set('page', page);
@@ -101,13 +102,13 @@
 <div class="flex flex-col xl:mx-60 lg:mx-40 flex-wrap justify-center pt-10 overflow-x-auto">
 	<Table>
 		<TableHead>
-			<TableHeadCell>Tracking Number</TableHeadCell>
-			<TableHeadCell>Receiver</TableHeadCell>
-			<TableHeadCell>Workstation</TableHeadCell>
+			<TableHeadCell>Status</TableHeadCell>
+			<TableHeadCell>Tracking #</TableHeadCell>
+			<TableHeadCell>Uniqname</TableHeadCell>
+			<TableHeadCell>Location</TableHeadCell>
 			<TableHeadCell>Carrier</TableHeadCell>
-			<TableHeadCell>Routing Code</TableHeadCell>
 			<TableHeadCell>Date</TableHeadCell>
-			<TableHeadCell>TCDI</TableHeadCell>
+			<TableHeadCell>Tray #</TableHeadCell>
 			<TableHeadCell>Kit #</TableHeadCell>
 		</TableHead>
 		<!-- svelte-ignore empty-block -->
@@ -116,25 +117,29 @@
 				{#each parcels as parcel}
 					<TableBodyRow>
 						<TableBodyCell>
+							{parcel.status}
+						</TableBodyCell>
+						<TableBodyCell>
 							{parcel.trackingNumber}
 						</TableBodyCell>
 						<TableBodyCell>
 							{parcel.uniqname}
 						</TableBodyCell>
 						<TableBodyCell>
-							{parcel.workstation}
+							{#if parcel.status == "Received"}
+								{parcel.workstation} -> {parcel.routingLocation}
+							{:else}
+								{parcel.workstation}
+							{/if}
 						</TableBodyCell>
 						<TableBodyCell>
-							{parcel.carrier}
+							{parcel.carrier ? parcel.carrier : ""}
 						</TableBodyCell>
 						<TableBodyCell>
-							{parcel.routingLocation}
+							{parcel.date ? new Date(parcel.date).toLocaleDateString() : "null"}
 						</TableBodyCell>
 						<TableBodyCell>
-							{new Date(parcel.date).toLocaleDateString()}
-						</TableBodyCell>
-						<TableBodyCell>
-							{parcel.TCDI}
+							{parcel.TCDI ? parcel.TCDI : ""}
 						</TableBodyCell>
 						<TableBodyCell>
 							{parcel.kitID}

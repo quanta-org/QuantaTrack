@@ -1,6 +1,8 @@
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { addParcel, getParcel } from '$lib/parcels';
+import { getLocations } from '$lib/locations';
+import type { Parcel } from '$lib/types';
 
 export const load = (async ({ locals, url }) => {
 	// Redirect to login if user doesn't exist
@@ -12,7 +14,8 @@ export const load = (async ({ locals, url }) => {
 	}
 
 	return {
-		user: locals.user
+		user: locals.user,
+		locations: await getLocations(),
 	};
 }) satisfies PageServerLoad;
 
@@ -24,13 +27,13 @@ export const actions: Actions = {
 		}
 
 		const data = await event.request.formData();
-		let parcel: App.Parcel;
+		let parcel: Parcel;
 
 		// Fail if user input is bad
 		try {
 			parcel = {
 				uniqname: data.get('uniqname') as string,
-				workstation: data.get('workstation') as string,
+				workstation: data.get('location') as string,
 				trackingNumber: data.get('trackingNumber') as string,
 				TCDI: data.get('TCDI') as string,
 				kitID: data.get('kitID') as string
@@ -40,11 +43,6 @@ export const actions: Actions = {
 		}
 
 		try {
-
-			if(!await getParcel(parcel.trackingNumber, "receipt")){
-				return fail(400, { message: 'Parcel not in receipt table!'});
-			}
-
 			if(await getParcel(parcel.trackingNumber, "opening")){
 				return fail(400, { message: 'Parcel already in opening table!'});
 			}

@@ -3,17 +3,13 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET = ( async ({ locals, url }) => {
-    // Redirect to login if user doesn't exist
-	let redirectUrl = new URL(url.origin);
-	redirectUrl.pathname = '/login';
+    // Error if user doesn't exist
 	if (!locals.user) {
-		redirectUrl.searchParams.append('redirect', url.pathname);
         throw error(400, "Unauthorized!")
 	}
 
-	// Redirect to login if unauthorized
+	// Error if unauthorized
 	if (!locals.user.auth) {
-		redirectUrl.searchParams.append('err', 'unauthorized');
 		throw error(400, "Unauthorized!")
 	}
 

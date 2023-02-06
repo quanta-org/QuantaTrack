@@ -9,28 +9,6 @@ declare namespace App {
 		exp: number;
 	}
 
-	interface Parcel {
-		uniqname: string,
-		workstation: string,
-		carrier?: string,
-		trackingNumber: string,
-		date?: date,
-		kitID?: string,
-		
-		// Optional sending data
-		client?: string,
-		kitType?: string,
-		kitBarcode?: string,
-		trackingNumberOutbound?: string,
-		clinicCode?: string,
-
-		// Optional receiving data
-		routingLocation?: string,
-
-		// Optional opening data
-		TCDI?: string,
-	}
-
 	// interface Error {}
 	interface Locals {
 		user: User | null;

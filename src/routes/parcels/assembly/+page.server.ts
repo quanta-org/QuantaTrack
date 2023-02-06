@@ -1,6 +1,8 @@
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { addParcel, getParcel } from '$lib/parcels';
+import { getLocations } from '$lib/locations';
+import type { Parcel } from '$lib/types';
 
 export const load = (async ({ locals, url }) => {
 	// Redirect to login if user doesn't exist
@@ -12,9 +14,12 @@ export const load = (async ({ locals, url }) => {
 	}
 
 	return {
-		user: locals.user
+		user: locals.user,
+		locations: await getLocations(),
 	};
 }) satisfies PageServerLoad;
+
+
 
 export const actions: Actions = {
 	addKitAssembly: async (event: RequestEvent) => {
@@ -24,7 +29,7 @@ export const actions: Actions = {
 		}
 
 		const data = await event.request.formData();
-		let parcels: App.Parcel[] = [];
+		let parcels: Parcel[] = [];
 
 		let trackingNumbers = data.getAll("trackingNumber").filter(n => n);
 		let kitIds = data.getAll("kitID").filter(n => n);
@@ -42,7 +47,7 @@ export const actions: Actions = {
 			for(let i = 0; i < trackingNumbers.length; i++){
 				parcels.push({
 					uniqname: data.get('uniqname') as string,
-					workstation: data.get('workstation') as string,
+					workstation: data.get('location') as string,
 					client: data.get('client') as string,
 					kitType: data.get('kitType') as string,
 					kitID: kitIds[i] as string,

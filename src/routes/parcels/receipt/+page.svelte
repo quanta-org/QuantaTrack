@@ -7,15 +7,8 @@
 
 	export let data: PageData;
 	export let form: HTMLFormElement;
-	let workstation: string;
 	let carrier: string;
 	let trackingNumber: string;
-	let routingLocations = [
-		{ value: 'NCRC-CONSULT', name: 'NCRC-CONSULT' },
-		{ value: 'Location 2', name: 'Location 2' },
-		{ value: 'Location 3', name: 'Location 3' },
-		{ value: 'Location 4', name: 'Location 4' }
-	];
 	let couriers = [
 		{ value: 'UPS', name: 'UPS' },
 		{ value: 'FedEx', name: 'FedEx' },
@@ -25,6 +18,7 @@
 	];
 	let isLoading: boolean = false;
 	let scanText: string | null = null;
+	let locations = data.locations;
 
 	$: if (scanText) {
 		if (trackingNumber === scanText) {
@@ -118,16 +112,10 @@
 		</div>
 
 		<div class="mb-6">
-			<Label for="workstation" class="mb-2">
-				<div class="text-white">Workstation</div>
+			<Label for="location" class="mb-2">
+				<div class="text-white">Current Location</div>
 			</Label>
-			<Input
-				id="workstation"
-				name="workstation"
-				bind:value={workstation}
-				class="mt-2"
-				required
-			/>
+			<Select id="location" name="location" items={locations} value="" class="mb-2" required />
 		</div>
 
 		<div class="mb-6">
@@ -151,7 +139,7 @@
 			<Select
 				id="routeLocation"
 				name="routeLocation"
-				items={routingLocations}
+				items={locations}
 				value=""
 				class="mb-2"
 				required
