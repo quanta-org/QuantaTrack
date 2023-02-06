@@ -4,13 +4,13 @@
 	import ScanCapture from '$lib/ScanCapture.svelte';
 	import Toaster from '$lib/Toaster.svelte';
 	import type { PageData } from './$types';
+	import { browser } from '$app/environment';
 
 	export let data: PageData;
 	let trackingNumberOutbound: string;
 	let client: string;
 	let kitType: string;
-	let trackingNumber: string[] = [''];
-	let kitID: string[] = [''];
+	let kits: { trackingNumber: string; kitID: string }[] = [{ trackingNumber: '', kitID: '' }];
 	let isLoading: boolean = false;
 	let scanText: string | null = null;
 	let locations = data.locations;
@@ -21,44 +21,37 @@
 		if (!trackingNumberOutbound) {
 			trackingNumberOutbound = scanText;
 		} else {
-			for (let i = 0; i < trackingNumber.length; i++) {
-				if (trackingNumber[i] == '') {
-					trackingNumber[i] = scanText;
-					addKit(i);
-					break;
-				} else if (kitID[i] == '') {
-					kitID[i] = scanText;
-					break;
-				} else if (i + 1 == trackingNumber.length) {
-					addKit(i);
+			kits.some((kit) => {
+				if (kit.trackingNumber == '') {
+					kit.trackingNumber = scanText as string;
+					return true;
+				} else if (kit.kitID == '') {
+					kit.kitID = scanText as string;
+					return true;
 				}
-			}
+			});
+			kits = kits;
 		}
 
 		scanText = null;
 	}
 
-	function addKit(index: number) {
-		if (trackingNumber.length <= index + 1) {
-			trackingNumber.push('');
-			kitID.push('');
-			trackingNumber = trackingNumber;
-			kitID = kitID;
+	// Add empty kit if last index not empty
+	$: if (kits[kits.length - 1].trackingNumber || kits[kits.length - 1].kitID) {
+		kits.push({ trackingNumber: '', kitID: '' });
+		kits = kits;
+		if (browser) {
+			window.scrollTo(0, document.body.scrollHeight);
 		}
-		window.scrollTo(0, document.body.scrollHeight);
 	}
 
-	function deleteKit(index: number) {
-		if (index == trackingNumber.length - 1) {
-			trackingNumber[index] = '';
-			kitID[index] = '';
-		} else {
-			trackingNumber.splice(index, 1);
-			kitID.splice(index, 1);
-			trackingNumber = trackingNumber;
-			kitID = kitID;
+	// Remove empty kits
+	$: kits = kits.filter((kit, index) => {
+		if (kit.kitID == '' && kit.trackingNumber == '' && index < kits.length - 1) {
+			return false;
 		}
-	}
+		return true;
+	});
 </script>
 
 <Toaster bind:toastMessage bind:toastSuccess />
@@ -66,13 +59,11 @@
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Assembly</h1>
 {#if !trackingNumberOutbound}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan outbound tracking number</h2>
-{:else if trackingNumber[trackingNumber.length - 1] == ''}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan tracking number</h2>
-{:else if kitID[kitID.length - 1] == ''}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan kit ID</h2>
-{:else}
-	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan tracking number</h2>
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan outbound tracking #</h2>
+{:else if kits[kits.length - 2] && kits[kits.length - 2].kitID == ''}
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan kit #</h2>
+{:else if kits[kits.length - 1].trackingNumber == ''}
+	<h2 class="text-2xl text-white mb-5 flex justify-center">Scan tracking #</h2>
 {/if}
 
 <div class="flex justify-center pb-10">
@@ -87,8 +78,7 @@
 				if (result.type == 'success') {
 					toastSuccess = true;
 					toastMessage = 'Sucessfully added parcel!';
-					trackingNumber = [''];
-					kitID = [''];
+					kits = [{ trackingNumber: '', kitID: '' }];
 				} else if (result.type == 'failure') {
 					toastSuccess = false;
 					toastMessage = result.data?.message;
@@ -176,7 +166,7 @@
 			</Input>
 		</div>
 
-		{#each trackingNumber as track, index}
+		{#each kits as kit, index}
 			<div class="mb-6">
 				<div class="flex justify-between">
 					<Label for="trackingNumber{index}" class="mb-2">
@@ -185,7 +175,8 @@
 					<CloseButton
 						class="text-white"
 						on:click={() => {
-							deleteKit(index);
+							kit.trackingNumber = '';
+							kit.kitID = '';
 						}}
 					/>
 				</div>
@@ -193,17 +184,14 @@
 					type="text"
 					id="trackingNumber{index}"
 					name="trackingNumber"
-					bind:value={trackingNumber[index]}
+					bind:value={kit.trackingNumber}
 					placeholder="Tracking #"
-					on:input={() => {
-						addKit(index);
-					}}
 				/>
 				<Input
 					type="text"
 					id="kitID{index}"
 					name="kitID"
-					bind:value={kitID[index]}
+					bind:value={kit.kitID}
 					placeholder="Kit #"
 					defaultClass="block mt-1 w-full"
 				/>

@@ -101,17 +101,18 @@ export async function getParcels(pageNumber: number = 1, filter: string = '') {
 		result = await connection.execute(sql, [start, end], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 	}
 
+	// (blank) = assembly, 1 = receipt, 2 = opening
 	result.rows?.reverse().forEach((item: any) => {
 		parcels.push({
 			status: item.ACTION_DATE_2 ? "Opened" : item.ACTION_DATE_1 ? "Received" : "Assembled",
-			uniqname: item.ACTION_TECH_EMAIL ?? item.ACTION_TECH_EMAIL_1 ?? item.ACTION_TECH_EMAIL_2,
-			workstation: item.WORKSTATION_CODE ?? item.WORKSTATION_CODE_1 ?? item.WORKSTATION_CODE_2,
-			carrier: item.CARRIER ?? item.CARRIER_1 ?? item.CARRIER_2,
-			trackingNumber: item.TRACKING_INBOUND ?? item.TRACKING_INBOUND_1 ?? item.TRACKING_INBOUND_2,
-			routingLocation: item.PARCEL_ROUTING_CODE ?? item.PARCEL_ROUTING_CODE_1 ?? item.PARCEL_ROUTING_CODE_2,
-			date: item.ACTION_DATE ?? item.ACTION_DATE_1 ?? item.ACTION_DATE_2,
-			TCDI: item.TCDI ?? item.TCDI_1 ?? item.TCDI_2,
-			kitID: item.MATERIAL_BARCODE ?? item.KIT_ID_NUMBER_1 ?? item.KIT_ID_NUMBER_2
+			uniqname: item.ACTION_TECH_EMAIL_2 ?? item.ACTION_TECH_EMAIL_1 ?? item.ACTION_TECH_EMAIL,
+			workstation: item.WORKSTATION_CODE_2 ?? item.WORKSTATION_CODE_1 ?? item.WORKSTATION_CODE,
+			carrier: item.CARRIER_1 ?? item.CARRIER,
+			trackingNumber: item.TRACKING_INBOUND_2 ?? item.TRACKING_INBOUND_1 ?? item.TRACKING_INBOUND,
+			routingLocation: item.PARCEL_ROUTING_CODE,
+			date: item.ACTION_DATE_2 ?? item.ACTION_DATE_1 ?? item.ACTION_DATE,
+			TCDI: item.TCDI,
+			kitID: item.KIT_ID_NUMBER ?? item.MATERIAL_BARCODE
 		});
 	});
 

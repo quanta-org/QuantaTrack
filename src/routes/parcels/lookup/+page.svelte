@@ -88,7 +88,7 @@
 	}
 </script>
 
-<Toaster bind:toastMessage={toastMessage} />
+<Toaster bind:toastMessage />
 
 <h1 class="text-4xl font-bold text-white mb-5 flex justify-center">Parcel Lookup</h1>
 
@@ -129,20 +129,20 @@
 							{parcel.uniqname}
 						</TableBodyCell>
 						<TableBodyCell>
-							{#if parcel.status == "Received"}
+							{#if parcel.status == 'Received'}
 								{parcel.workstation} -> {parcel.routingLocation}
 							{:else}
 								{parcel.workstation}
 							{/if}
 						</TableBodyCell>
 						<TableBodyCell>
-							{parcel.carrier ? parcel.carrier : ""}
+							{parcel.carrier ? parcel.carrier : ''}
 						</TableBodyCell>
 						<TableBodyCell>
-							{parcel.date ? new Date(parcel.date).toLocaleDateString() : "null"}
+							{parcel.date ? new Date(parcel.date).toLocaleDateString() : 'null'}
 						</TableBodyCell>
 						<TableBodyCell>
-							{parcel.TCDI ? parcel.TCDI : ""}
+							{parcel.TCDI ? parcel.TCDI : ''}
 						</TableBodyCell>
 						<TableBodyCell>
 							{parcel.kitID}

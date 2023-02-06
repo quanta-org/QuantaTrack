@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ButtonGroup } from 'flowbite-svelte';
+	import { Button } from 'flowbite-svelte';
 </script>
 
 <h1 class="text-5xl text-white font-bold text-center mb-10">Quanta Track</h1>
